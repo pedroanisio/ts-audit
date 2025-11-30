@@ -1,0 +1,1058 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Software Project Impact Assessment — A Lattice-Theoretic Approach</title>
+    
+    <!-- KaTeX for mathematical notation -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+        onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}]});"></script>
+    
+    <style>
+        /* ══════════════════════════════════════════════════════════════════════
+           CLASSIC ACADEMIC STYLE
+           Inspired by LaTeX/academic paper aesthetics
+           ══════════════════════════════════════════════════════════════════════ */
+        
+        :root {
+            --text-primary: #1a1a1a;
+            --text-secondary: #4a4a4a;
+            --text-muted: #6a6a6a;
+            --bg-paper: #fefdfb;
+            --bg-cream: #f8f6f0;
+            --bg-highlight: #fff9e6;
+            --border-light: #d4d0c8;
+            --border-dark: #8a8680;
+            --accent-blue: #1e4a7a;
+            --accent-red: #8b0000;
+            --accent-green: #2e5a2e;
+            --accent-gold: #8b7355;
+            --sil-0: #6b8e6b;
+            --sil-1: #4a7c4a;
+            --sil-2: #cc9900;
+            --sil-3: #cc6600;
+            --sil-4: #993333;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Times New Roman', 'Palatino Linotype', 'Book Antiqua', Palatino, Georgia, serif;
+            font-size: 11pt;
+            line-height: 1.6;
+            color: var(--text-primary);
+            background: var(--bg-cream);
+            padding: 0;
+        }
+        
+        .paper {
+            max-width: 8.5in;
+            margin: 0.5in auto;
+            background: var(--bg-paper);
+            padding: 1in;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            border: 1px solid var(--border-light);
+        }
+        
+        /* Typography */
+        h1 {
+            font-size: 18pt;
+            font-weight: normal;
+            text-align: center;
+            margin-bottom: 0.5em;
+            font-variant: small-caps;
+            letter-spacing: 0.05em;
+        }
+        
+        .subtitle {
+            text-align: center;
+            font-style: italic;
+            color: var(--text-secondary);
+            margin-bottom: 1em;
+        }
+        
+        .authors {
+            text-align: center;
+            margin-bottom: 0.5em;
+        }
+        
+        .institution {
+            text-align: center;
+            font-size: 10pt;
+            color: var(--text-muted);
+            margin-bottom: 2em;
+        }
+        
+        .abstract {
+            margin: 2em 0.5in;
+            font-size: 10pt;
+        }
+        
+        .abstract-title {
+            font-weight: bold;
+            font-variant: small-caps;
+            text-align: center;
+            margin-bottom: 0.5em;
+        }
+        
+        .abstract p {
+            text-align: justify;
+            text-indent: 1.5em;
+        }
+        
+        h2 {
+            font-size: 12pt;
+            font-weight: bold;
+            margin-top: 1.5em;
+            margin-bottom: 0.5em;
+            border-bottom: 1px solid var(--border-light);
+            padding-bottom: 0.25em;
+        }
+        
+        h2::before {
+            content: counter(section) ". ";
+            counter-increment: section;
+        }
+        
+        h3 {
+            font-size: 11pt;
+            font-weight: bold;
+            font-style: italic;
+            margin-top: 1em;
+            margin-bottom: 0.5em;
+        }
+        
+        p {
+            text-align: justify;
+            margin-bottom: 0.75em;
+            text-indent: 1.5em;
+        }
+        
+        p.no-indent {
+            text-indent: 0;
+        }
+        
+        /* Counter for sections */
+        .paper {
+            counter-reset: section figure table;
+        }
+        
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1em 0;
+            font-size: 10pt;
+        }
+        
+        th, td {
+            border: 1px solid var(--border-dark);
+            padding: 0.4em 0.6em;
+            text-align: left;
+        }
+        
+        th {
+            background: var(--bg-cream);
+            font-weight: bold;
+            font-variant: small-caps;
+        }
+        
+        .table-caption {
+            font-size: 10pt;
+            text-align: center;
+            margin-top: 0.5em;
+            margin-bottom: 1.5em;
+        }
+        
+        .table-caption::before {
+            content: "Table " counter(table) ": ";
+            counter-increment: table;
+            font-weight: bold;
+        }
+        
+        /* Figures */
+        .figure {
+            margin: 1.5em 0;
+            text-align: center;
+        }
+        
+        .figure-content {
+            background: var(--bg-cream);
+            border: 1px solid var(--border-light);
+            padding: 1em;
+            display: inline-block;
+            max-width: 100%;
+        }
+        
+        .figure-caption {
+            font-size: 10pt;
+            text-align: center;
+            margin-top: 0.5em;
+            font-style: italic;
+        }
+        
+        .figure-caption::before {
+            content: "Figure " counter(figure) ": ";
+            counter-increment: figure;
+            font-weight: bold;
+            font-style: normal;
+        }
+        
+        /* Definition boxes */
+        .definition {
+            background: var(--bg-highlight);
+            border-left: 3px solid var(--accent-gold);
+            padding: 0.75em 1em;
+            margin: 1em 0;
+            font-size: 10pt;
+        }
+        
+        .definition-title {
+            font-weight: bold;
+            font-variant: small-caps;
+        }
+        
+        /* Theorem/Proposition boxes */
+        .theorem {
+            border: 1px solid var(--border-dark);
+            padding: 0.75em 1em;
+            margin: 1em 0;
+            background: #fff;
+        }
+        
+        .theorem-title {
+            font-weight: bold;
+            font-style: italic;
+        }
+        
+        /* Warning boxes */
+        .caveat {
+            background: #fff5f5;
+            border: 1px solid var(--accent-red);
+            border-left-width: 3px;
+            padding: 0.75em 1em;
+            margin: 1em 0;
+            font-size: 10pt;
+        }
+        
+        .caveat-title {
+            font-weight: bold;
+            color: var(--accent-red);
+        }
+        
+        /* SIL level indicators */
+        .sil-badge {
+            display: inline-block;
+            padding: 0.15em 0.5em;
+            border-radius: 3px;
+            font-size: 9pt;
+            font-weight: bold;
+            color: white;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .sil-0 { background: var(--sil-0); }
+        .sil-1 { background: var(--sil-1); }
+        .sil-2 { background: var(--sil-2); }
+        .sil-3 { background: var(--sil-3); }
+        .sil-4 { background: var(--sil-4); }
+        
+        /* Assessment cards */
+        .assessment-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1em;
+            margin: 1em 0;
+        }
+        
+        .assessment-card {
+            border: 1px solid var(--border-light);
+            padding: 0.75em;
+            background: #fff;
+        }
+        
+        .assessment-card h4 {
+            font-size: 10pt;
+            font-weight: bold;
+            margin-bottom: 0.5em;
+            display: flex;
+            align-items: center;
+            gap: 0.5em;
+        }
+        
+        .assessment-card .icon {
+            font-size: 14pt;
+        }
+        
+        .assessment-card dl {
+            font-size: 9pt;
+            margin: 0;
+        }
+        
+        .assessment-card dt {
+            color: var(--text-muted);
+            display: inline;
+        }
+        
+        .assessment-card dd {
+            display: inline;
+            margin: 0;
+        }
+        
+        .assessment-card dd::after {
+            content: "";
+            display: block;
+        }
+        
+        /* Flowchart */
+        .flowchart {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5em;
+            padding: 1em;
+        }
+        
+        .flow-box {
+            border: 2px solid var(--accent-blue);
+            padding: 0.5em 1em;
+            background: white;
+            text-align: center;
+            min-width: 200px;
+        }
+        
+        .flow-box.input {
+            border-radius: 20px;
+        }
+        
+        .flow-box.process {
+            border-radius: 0;
+        }
+        
+        .flow-box.output {
+            border-radius: 0;
+            border-style: double;
+            border-width: 4px;
+        }
+        
+        .flow-arrow {
+            font-size: 20pt;
+            color: var(--accent-blue);
+        }
+        
+        /* Bar chart (CSS only) */
+        .bar-chart {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5em;
+            margin: 1em 0;
+        }
+        
+        .bar-row {
+            display: flex;
+            align-items: center;
+            gap: 0.5em;
+        }
+        
+        .bar-label {
+            width: 120px;
+            font-size: 9pt;
+            text-align: right;
+        }
+        
+        .bar-container {
+            flex: 1;
+            height: 20px;
+            background: #eee;
+            position: relative;
+        }
+        
+        .bar {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 0.5em;
+            color: white;
+            font-size: 8pt;
+            font-weight: bold;
+        }
+        
+        /* Radar chart placeholder */
+        .radar-placeholder {
+            width: 300px;
+            height: 300px;
+            margin: 0 auto;
+            position: relative;
+        }
+        
+        /* Risk matrix */
+        .risk-matrix {
+            display: grid;
+            grid-template-columns: auto repeat(5, 1fr);
+            gap: 2px;
+            font-size: 9pt;
+            margin: 1em auto;
+            max-width: 400px;
+        }
+        
+        .risk-matrix > div {
+            padding: 0.4em;
+            text-align: center;
+            border: 1px solid var(--border-light);
+        }
+        
+        .risk-header {
+            background: var(--bg-cream);
+            font-weight: bold;
+        }
+        
+        .risk-low { background: #d4edda; }
+        .risk-med { background: #fff3cd; }
+        .risk-high { background: #f8d7da; }
+        .risk-extreme { background: #dc3545; color: white; }
+        
+        /* Footnotes */
+        .footnotes {
+            margin-top: 2em;
+            padding-top: 1em;
+            border-top: 1px solid var(--border-light);
+            font-size: 9pt;
+        }
+        
+        .footnotes ol {
+            padding-left: 1.5em;
+        }
+        
+        /* References */
+        .references {
+            font-size: 9pt;
+        }
+        
+        .references ol {
+            padding-left: 1.5em;
+        }
+        
+        .references li {
+            margin-bottom: 0.5em;
+        }
+        
+        /* Two column layout for comparison */
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5em;
+        }
+        
+        /* Print styles */
+        @media print {
+            body {
+                background: white;
+            }
+            .paper {
+                box-shadow: none;
+                border: none;
+                margin: 0;
+                padding: 0.5in;
+            }
+        }
+        
+        /* Recommendations summary */
+        .recommendation-summary {
+            background: var(--bg-cream);
+            border: 1px solid var(--border-light);
+            padding: 1em;
+            margin: 1em 0;
+        }
+        
+        .recommendation-summary h4 {
+            font-variant: small-caps;
+            border-bottom: 1px solid var(--border-light);
+            padding-bottom: 0.25em;
+            margin-bottom: 0.5em;
+        }
+        
+        .recommendation-summary ul {
+            margin: 0;
+            padding-left: 1.5em;
+            font-size: 10pt;
+        }
+        
+        /* Lattice diagram */
+        .lattice-diagram {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.25em;
+            padding: 1em;
+            font-family: 'Courier New', monospace;
+            font-size: 10pt;
+        }
+        
+        .lattice-level {
+            display: flex;
+            gap: 2em;
+        }
+        
+        .lattice-node {
+            border: 1px solid var(--border-dark);
+            padding: 0.25em 0.5em;
+            background: white;
+        }
+        
+        .lattice-edge {
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+<body>
+    <div class="paper">
+        <!-- Title Block -->
+        <h1>Software Project Impact Assessment</h1>
+        <p class="subtitle">A Practical Application of Lattice-Theoretic Safety Integrity Classification</p>
+        
+        <p class="authors">
+            <em>Conceptual Framework for Educational Purposes</em>
+        </p>
+        <p class="institution">
+            Based on IEC 61508, ISO 26262, DO-178C, ECSS-E-ST-40C, and IEC 62304<br>
+            Generated: <script>document.write(new Date().toLocaleDateString('en-US', {year: 'numeric', month: 'long', day: 'numeric'}))</script>
+        </p>
+        
+        <!-- Abstract -->
+        <div class="abstract">
+            <p class="abstract-title">Abstract</p>
+            <p>
+                This document presents a practical self-assessment methodology for determining appropriate 
+                software development constraints based on impact analysis. Using a lattice-theoretic framework 
+                that maps harm potential, exposure, and controllability to safety integrity levels, we derive 
+                concrete recommendations for architecture, testing, process, and documentation requirements.
+                The methodology constructs explicit functors from heterogeneous safety standards to a universal 
+                ordinal space, enabling cross-domain communication while explicitly acknowledging the lossy 
+                nature of such mappings.
+            </p>
+        </div>
+        
+        <!-- Section 1: Introduction -->
+        <h2>Introduction</h2>
+        
+        <p class="no-indent">
+            The proliferation of software in safety-relevant domains necessitates systematic approaches to 
+            determining appropriate development rigor. Industrial standards such as IEC 61508, ISO 26262, 
+            and DO-178C provide domain-specific guidance, yet practitioners often require cross-domain 
+            comparison and initial scoping before formal hazard analysis.
+        </p>
+        
+        <p>
+            This assessment framework addresses two fundamental questions:
+        </p>
+        
+        <div class="definition">
+            <p class="definition-title">Assessment Questions</p>
+            <p><strong>Q1:</strong> Given the potential impact of software failure, what integrity level is required?</p>
+            <p><strong>Q2:</strong> What concrete constraints on architecture, testing, and process follow from that level?</p>
+        </div>
+        
+        <!-- Section 2: The Assessment Method -->
+        <h2>Assessment Methodology</h2>
+        
+        <p class="no-indent">
+            The assessment proceeds through four dimensions, each contributing to the overall risk profile.
+            The method is inspired by the ISO 26262 ASIL determination matrix (Severity × Exposure × Controllability) 
+            generalized to arbitrary domains.
+        </p>
+        
+        <div class="figure">
+            <div class="figure-content">
+                <div class="flowchart">
+                    <div class="flow-box input">Impact Assessment Questions</div>
+                    <div class="flow-arrow">↓</div>
+                    <div class="flow-box process">Risk Calculation<br><small>$R = P_h \times P_e \times P_u \times W_s$</small></div>
+                    <div class="flow-arrow">↓</div>
+                    <div class="flow-box process">SIL Derivation<br><small>$\text{SIL} = \lceil \log_{10}(\text{RRF}) \rceil$</small></div>
+                    <div class="flow-arrow">↓</div>
+                    <div class="flow-box output">Recommendations</div>
+                </div>
+            </div>
+            <p class="figure-caption">Assessment workflow from questions to recommendations</p>
+        </div>
+        
+        <h3>2.1 Input Dimensions</h3>
+        
+        <table>
+            <tr>
+                <th>Dimension</th>
+                <th>Question</th>
+                <th>Scale</th>
+            </tr>
+            <tr>
+                <td><strong>Harm Potential</strong></td>
+                <td>What is the worst-case outcome if the software fails completely?</td>
+                <td>None → Catastrophic (10 levels)</td>
+            </tr>
+            <tr>
+                <td><strong>Exposure Frequency</strong></td>
+                <td>How often are users/systems exposed to the hazard?</td>
+                <td>Rare → Continuous (5 levels)</td>
+            </tr>
+            <tr>
+                <td><strong>Controllability</strong></td>
+                <td>Can users prevent harm if the software fails?</td>
+                <td>Fully controllable → Uncontrollable (5 levels)</td>
+            </tr>
+            <tr>
+                <td><strong>Operational Context</strong></td>
+                <td>What is the deployment context?</td>
+                <td>Personal → Critical infrastructure (6 levels)</td>
+            </tr>
+        </table>
+        <p class="table-caption">The four assessment dimensions</p>
+        
+        <!-- Section 3: Risk Matrix -->
+        <h2>Risk Classification Matrix</h2>
+        
+        <p class="no-indent">
+            The combination of severity and controllability determines the base integrity requirement, 
+            modulated by exposure frequency and operational context.
+        </p>
+        
+        <div class="figure">
+            <div class="figure-content">
+                <div class="risk-matrix">
+                    <div class="risk-header"></div>
+                    <div class="risk-header">C1</div>
+                    <div class="risk-header">C2</div>
+                    <div class="risk-header">C3</div>
+                    <div class="risk-header">C4</div>
+                    <div class="risk-header">C5</div>
+                    
+                    <div class="risk-header">S1 (Minor)</div>
+                    <div class="risk-low">QM</div>
+                    <div class="risk-low">QM</div>
+                    <div class="risk-low">SIL 1</div>
+                    <div class="risk-med">SIL 1</div>
+                    <div class="risk-med">SIL 1</div>
+                    
+                    <div class="risk-header">S2 (Moderate)</div>
+                    <div class="risk-low">QM</div>
+                    <div class="risk-low">SIL 1</div>
+                    <div class="risk-med">SIL 1</div>
+                    <div class="risk-med">SIL 2</div>
+                    <div class="risk-high">SIL 2</div>
+                    
+                    <div class="risk-header">S3 (Serious)</div>
+                    <div class="risk-low">SIL 1</div>
+                    <div class="risk-med">SIL 1</div>
+                    <div class="risk-med">SIL 2</div>
+                    <div class="risk-high">SIL 3</div>
+                    <div class="risk-high">SIL 3</div>
+                    
+                    <div class="risk-header">S4 (Severe)</div>
+                    <div class="risk-med">SIL 1</div>
+                    <div class="risk-med">SIL 2</div>
+                    <div class="risk-high">SIL 3</div>
+                    <div class="risk-high">SIL 3</div>
+                    <div class="risk-extreme">SIL 4</div>
+                    
+                    <div class="risk-header">S5 (Catastrophic)</div>
+                    <div class="risk-med">SIL 2</div>
+                    <div class="risk-high">SIL 3</div>
+                    <div class="risk-high">SIL 3</div>
+                    <div class="risk-extreme">SIL 4</div>
+                    <div class="risk-extreme">SIL 4</div>
+                </div>
+                <p style="font-size: 9pt; color: var(--text-muted); margin-top: 0.5em;">
+                    S = Severity (rows), C = Controllability (columns, C1=fully controllable, C5=uncontrollable)
+                </p>
+            </div>
+            <p class="figure-caption">Simplified risk classification matrix (cf. ISO 26262 ASIL determination)</p>
+        </div>
+        
+        <!-- Section 4: Example Assessments -->
+        <h2>Example Assessments</h2>
+        
+        <p class="no-indent">
+            We present six representative project types spanning the integrity level spectrum, 
+            demonstrating how the assessment framework derives concrete constraints.
+        </p>
+        
+        <div class="assessment-grid">
+            <div class="assessment-card">
+                <h4><span class="icon">📋</span> Internal Business Tool</h4>
+                <dl>
+                    <dt>Harm Potential:</dt> <dd>None</dd>
+                    <dt>Exposure:</dt> <dd>Frequent</dd>
+                    <dt>Controllability:</dt> <dd>Fully controllable</dd>
+                    <dt>Context:</dt> <dd>Enterprise</dd>
+                    <dt>Result:</dt> <dd><span class="sil-badge sil-1">SIL 1</span></dd>
+                </dl>
+            </div>
+            
+            <div class="assessment-card">
+                <h4><span class="icon">🌐</span> Public Web Application</h4>
+                <dl>
+                    <dt>Harm Potential:</dt> <dd>Financial loss</dd>
+                    <dt>Exposure:</dt> <dd>Frequent</dd>
+                    <dt>Controllability:</dt> <dd>Mostly controllable</dd>
+                    <dt>Context:</dt> <dd>Public-facing</dd>
+                    <dt>Result:</dt> <dd><span class="sil-badge sil-2">SIL 2</span></dd>
+                </dl>
+            </div>
+            
+            <div class="assessment-card">
+                <h4><span class="icon">🏠</span> Smart Home Door Lock</h4>
+                <dl>
+                    <dt>Harm Potential:</dt> <dd>Property damage</dd>
+                    <dt>Exposure:</dt> <dd>Frequent</dd>
+                    <dt>Controllability:</dt> <dd>Mostly controllable</dd>
+                    <dt>Context:</dt> <dd>Personal use</dd>
+                    <dt>Result:</dt> <dd><span class="sil-badge sil-2">SIL 2</span></dd>
+                </dl>
+            </div>
+            
+            <div class="assessment-card">
+                <h4><span class="icon">🔌</span> IoT Actuator Device</h4>
+                <dl>
+                    <dt>Harm Potential:</dt> <dd>Minor injury</dd>
+                    <dt>Exposure:</dt> <dd>Common</dd>
+                    <dt>Controllability:</dt> <dd>Sometimes controllable</dd>
+                    <dt>Context:</dt> <dd>Personal use</dd>
+                    <dt>Result:</dt> <dd><span class="sil-badge sil-3">SIL 3</span></dd>
+                </dl>
+            </div>
+            
+            <div class="assessment-card">
+                <h4><span class="icon">🏥</span> Medical Monitoring Device</h4>
+                <dl>
+                    <dt>Harm Potential:</dt> <dd>Serious injury</dd>
+                    <dt>Exposure:</dt> <dd>Continuous</dd>
+                    <dt>Controllability:</dt> <dd>Rarely controllable</dd>
+                    <dt>Context:</dt> <dd>Life-sustaining</dd>
+                    <dt>Result:</dt> <dd><span class="sil-badge sil-4">SIL 4</span> → IEC 62304 Class C</dd>
+                </dl>
+            </div>
+            
+            <div class="assessment-card">
+                <h4><span class="icon">🚗</span> Automotive ADAS System</h4>
+                <dl>
+                    <dt>Harm Potential:</dt> <dd>Multiple fatalities</dd>
+                    <dt>Exposure:</dt> <dd>Frequent</dd>
+                    <dt>Controllability:</dt> <dd>Sometimes controllable</dd>
+                    <dt>Context:</dt> <dd>Public-facing</dd>
+                    <dt>Result:</dt> <dd><span class="sil-badge sil-4">SIL 4</span> → ISO 26262 ASIL D</dd>
+                </dl>
+            </div>
+        </div>
+        
+        <!-- Section 5: Derived Constraints -->
+        <h2>Derived Constraints by Integrity Level</h2>
+        
+        <p class="no-indent">
+            Each integrity level implies specific constraints across four domains: architecture, 
+            testing, development process, and documentation. The constraints form a monotonically 
+            increasing sequence.
+        </p>
+        
+        <h3>5.1 Architecture Constraints</h3>
+        
+        <table>
+            <tr>
+                <th>Level</th>
+                <th>HFT</th>
+                <th>Pattern</th>
+                <th>Key Techniques</th>
+            </tr>
+            <tr>
+                <td><span class="sil-badge sil-0">SIL 0</span></td>
+                <td>0</td>
+                <td>Standard architecture</td>
+                <td>Modular design</td>
+            </tr>
+            <tr>
+                <td><span class="sil-badge sil-1">SIL 1</span></td>
+                <td>0</td>
+                <td>Defensive programming</td>
+                <td>Input validation, error handling, watchdogs</td>
+            </tr>
+            <tr>
+                <td><span class="sil-badge sil-2">SIL 2</span></td>
+                <td>0</td>
+                <td>Fail-safe with diagnostics</td>
+                <td>Assertions, memory protection, plausibility checks</td>
+            </tr>
+            <tr>
+                <td><span class="sil-badge sil-3">SIL 3</span></td>
+                <td>1</td>
+                <td>Redundant (1oo2 or 2oo3)</td>
+                <td>Hot standby, diverse algorithms, safety kernel</td>
+            </tr>
+            <tr>
+                <td><span class="sil-badge sil-4">SIL 4</span></td>
+                <td>2</td>
+                <td>Diverse redundant with voting</td>
+                <td>N-version programming, formal verification, hardware interlocks</td>
+            </tr>
+        </table>
+        <p class="table-caption">Architecture constraints by integrity level (HFT = Hardware Fault Tolerance)</p>
+        
+        <h3>5.2 Testing Constraints</h3>
+        
+        <div class="figure">
+            <div class="figure-content">
+                <div class="bar-chart">
+                    <div class="bar-row">
+                        <span class="bar-label">SIL 0</span>
+                        <div class="bar-container">
+                            <div class="bar" style="width: 20%; background: var(--sil-0);">—</div>
+                        </div>
+                    </div>
+                    <div class="bar-row">
+                        <span class="bar-label">SIL 1</span>
+                        <div class="bar-container">
+                            <div class="bar" style="width: 40%; background: var(--sil-1);">80%</div>
+                        </div>
+                    </div>
+                    <div class="bar-row">
+                        <span class="bar-label">SIL 2</span>
+                        <div class="bar-container">
+                            <div class="bar" style="width: 60%; background: var(--sil-2);">90%</div>
+                        </div>
+                    </div>
+                    <div class="bar-row">
+                        <span class="bar-label">SIL 3</span>
+                        <div class="bar-container">
+                            <div class="bar" style="width: 85%; background: var(--sil-3);">100%</div>
+                        </div>
+                    </div>
+                    <div class="bar-row">
+                        <span class="bar-label">SIL 4</span>
+                        <div class="bar-container">
+                            <div class="bar" style="width: 100%; background: var(--sil-4);">100% + MC/DC</div>
+                        </div>
+                    </div>
+                </div>
+                <p style="font-size: 9pt; text-align: center; color: var(--text-muted);">Statement coverage requirement by SIL</p>
+            </div>
+            <p class="figure-caption">Code coverage requirements scale with integrity level</p>
+        </div>
+        
+        <table>
+            <tr>
+                <th>Level</th>
+                <th>Coverage</th>
+                <th>Independence</th>
+                <th>Additional Test Types</th>
+            </tr>
+            <tr>
+                <td><span class="sil-badge sil-1">SIL 1</span></td>
+                <td>Statement ≥80%</td>
+                <td>Self</td>
+                <td>Boundary value, equivalence partitioning</td>
+            </tr>
+            <tr>
+                <td><span class="sil-badge sil-2">SIL 2</span></td>
+                <td>Stmt ≥90%, Branch ≥80%</td>
+                <td>Team</td>
+                <td>Static analysis, code review, mutation testing</td>
+            </tr>
+            <tr>
+                <td><span class="sil-badge sil-3">SIL 3</span></td>
+                <td>Stmt 100%, Branch 100%, MC/DC ≥80%</td>
+                <td>Independent</td>
+                <td>Formal inspection, fault injection, stress testing</td>
+            </tr>
+            <tr>
+                <td><span class="sil-badge sil-4">SIL 4</span></td>
+                <td>All metrics 100%</td>
+                <td>Third-party</td>
+                <td>Formal verification, exhaustive testing, theorem proving</td>
+            </tr>
+        </table>
+        <p class="table-caption">Testing requirements by integrity level</p>
+        
+        <!-- Section 6: Case Study -->
+        <h2>Detailed Case Study: Industrial Robot Controller</h2>
+        
+        <p class="no-indent">
+            Consider a software controller for an industrial welding robot operating in a factory 
+            environment. We perform a complete assessment:
+        </p>
+        
+        <div class="two-column">
+            <div class="recommendation-summary">
+                <h4>Input Parameters</h4>
+                <ul>
+                    <li><strong>Harm Potential:</strong> Serious injury (robot arm can injure workers)</li>
+                    <li><strong>Exposure:</strong> Common (workers near robot 10-50% of operating time)</li>
+                    <li><strong>Controllability:</strong> Sometimes controllable (E-stop available but not always reachable)</li>
+                    <li><strong>Context:</strong> Critical infrastructure (factory production line)</li>
+                </ul>
+            </div>
+            
+            <div class="recommendation-summary">
+                <h4>Derived Risk Metrics</h4>
+                <ul>
+                    <li><strong>Unreduced Risk:</strong> $1.5 \times 10^{0}$</li>
+                    <li><strong>Tolerable Risk:</strong> $1.0 \times 10^{-6}$</li>
+                    <li><strong>Risk Reduction Factor:</strong> $1.5 \times 10^{6}$</li>
+                    <li><strong>Required Level:</strong> <span class="sil-badge sil-4">SIL 4</span> (IEC 61508)</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="recommendation-summary" style="margin-top: 1em;">
+            <h4>Recommended Constraints</h4>
+            <div class="two-column">
+                <div>
+                    <p><strong>Architecture:</strong></p>
+                    <ul>
+                        <li>Diverse redundant architecture with voting (2oo3)</li>
+                        <li>Hardware Fault Tolerance: 2</li>
+                        <li>N-version programming</li>
+                        <li>Hardware interlocks for safety-critical functions</li>
+                        <li>Formal verification of safety kernel</li>
+                    </ul>
+                </div>
+                <div>
+                    <p><strong>Testing:</strong></p>
+                    <ul>
+                        <li>100% statement, branch, and MC/DC coverage</li>
+                        <li>Third-party independent V&V</li>
+                        <li>Formal verification with theorem provers</li>
+                        <li>Model checking of state machines</li>
+                        <li>Certified tool chains</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="two-column" style="margin-top: 0.5em;">
+                <div>
+                    <p><strong>Process:</strong></p>
+                    <ul>
+                        <li>V-model with formal methods</li>
+                        <li>Third-party assessment</li>
+                        <li>Formal certification review</li>
+                        <li>Independent V&V throughout lifecycle</li>
+                    </ul>
+                </div>
+                <div>
+                    <p><strong>Documentation:</strong></p>
+                    <ul>
+                        <li>Safety Case with formal safety argument</li>
+                        <li>Independent Assessment Report</li>
+                        <li>Certification Evidence Package</li>
+                        <li>Complete forward/backward traceability</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Section 7: Mathematical Foundation -->
+        <h2>Mathematical Foundation</h2>
+        
+        <p class="no-indent">
+            The assessment framework is grounded in lattice theory. Each safety standard's 
+            integrity levels form a bounded total order (chain), enabling systematic comparison.
+        </p>
+        
+        <div class="theorem">
+            <p class="theorem-title">Definition (Safety Integrity Lattice)</p>
+            <p>
+                A Safety Integrity Lattice is a structure $\mathbb{L} = (L, \bot, \top, \sqcup, \sqcap, \leq)$ where 
+                $L$ is the carrier set, $\bot$ is the bottom (no requirements), $\top$ is the top (maximum integrity), 
+                and operations satisfy:
+            </p>
+            <p style="text-align: center;">
+                $a \sqcup b = \max(a, b)$ &emsp; (join = maximum integrity)<br>
+                $a \sqcap b = \min(a, b)$ &emsp; (meet = minimum integrity)
+            </p>
+        </div>
+        
+        <div class="figure">
+            <div class="figure-content">
+                <div class="lattice-diagram">
+                    <div class="lattice-level"><div class="lattice-node">⊤ (SIL 4)</div></div>
+                    <div class="lattice-edge">│</div>
+                    <div class="lattice-level"><div class="lattice-node">SIL 3</div></div>
+                    <div class="lattice-edge">│</div>
+                    <div class="lattice-level"><div class="lattice-node">SIL 2</div></div>
+                    <div class="lattice-edge">│</div>
+                    <div class="lattice-level"><div class="lattice-node">SIL 1</div></div>
+                    <div class="lattice-edge">│</div>
+                    <div class="lattice-level"><div class="lattice-node">⊥ (SIL 0)</div></div>
+                </div>
+            </div>
+            <p class="figure-caption">The IEC 61508 SIL lattice (a total order / chain)</p>
+        </div>
+        
+        <div class="theorem">
+            <p class="theorem-title">Proposition (Universal Ordinal Functor)</p>
+            <p>
+                For each standard $\mathcal{S}_i$ with $|L_i| = k_i$ levels, define 
+                $\phi_i: L_i \to [0,1]$ by:
+            </p>
+            <p style="text-align: center;">
+                $$\phi_i(\ell_j) = \frac{j}{k_i - 1}$$
+            </p>
+            <p>
+                This functor preserves order and lattice operations, enabling cross-standard 
+                comparison via ordinal equivalence.
+            </p>
+        </div>
+        
+        <!-- Caveats -->
+        <h2>Caveats and Limitations</h2>
+        
+        <div class="caveat">
+            <p class="caveat-title">⚠️ Important Disclaimers</p>
+            <ul>
+                <li>This is an <strong>initial scoping tool</strong>, not a substitute for formal hazard analysis.</li>
+                <li>Cross-standard mappings are <strong>ordinal only</strong>, not probability equivalence.</li>
+                <li>Systems with potential for fatalities require <strong>formal assessment by qualified professionals</strong>.</li>
+                <li>Always consult the <strong>actual standards</strong> for compliance requirements.</li>
+                <li>Domain-specific standards (ISO 26262, DO-178C, etc.) have their own assessment methods.</li>
+            </ul>
+        </div>
+        
+        <div class="theorem">
+            <p class="theorem-title">The Quotient Semantics</p>
+            <p>
+                The universal ordinal mapping is <em>deliberately lossy</em>. Two hazards with the same 
+                ASIL may have arrived via different S×E×C paths with genuinely incomparable risk profiles.
+                This information is quotient'd away in favor of ordinal comparability. The mapping 
+                enables cross-standard <em>communication</em>, not <em>substitution</em>.
+            </p>
+        </div>
+        
+        <!-- References -->
+        <h2>References</h2>
+        
+        <div class="references">
+            <ol>
+                <li>IEC 61508:2010 — Functional Safety of Electrical/Electronic/Programmable Electronic Safety-Related Systems</li>
+                <li>ISO 26262:2018 — Road Vehicles — Functional Safety</li>
+                <li>DO-178C (RTCA, 2011) — Software Considerations in Airborne Systems and Equipment Certification</li>
+                <li>ECSS-E-ST-40C (ESA, 2009) — Space Engineering: Software</li>
+                <li>IEC 62304:2006/Amd.1:2015 — Medical Device Software — Software Life Cycle Processes</li>
+                <li>AC 25.1309-1A (FAA) — System Design and Analysis</li>
+                <li>Goguen, J. A. & Burstall, R. M. (1992). Institutions: Abstract Model Theory for Specification and Programming. <em>JACM</em>, 39(1), 95-146.</li>
+            </ol>
+        </div>
+        
+        <!-- Footer -->
+        <div class="footnotes">
+            <p style="text-align: center; font-style: italic;">
+                This document was generated from the ts-audit safety classification framework.<br>
+                For interactive assessment, see <code>examples/assess-project.ts</code>.
+            </p>
+        </div>
+    </div>
+</body>
+</html>
+
