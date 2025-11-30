@@ -19,7 +19,7 @@ import {
 	type EngineeringConstraints,
 	assessProjectConstraints,
 	compareIntegrityLevels,
-} from "./risk-assessment";
+} from "../src/shared/risk-assessment";
 
 // =============================================================================
 // QUICK ASSESSMENT PROFILES
