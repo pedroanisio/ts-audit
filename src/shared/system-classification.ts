@@ -1,8 +1,74 @@
 /**
  * System Classification Model
  *
- * Formalizes system types, maturity levels, criticality, and deployment contexts
- * with mappings to formal standards where applicable.
+ * A Categorical Framework for Cross-Standard Safety Communication
+ *
+ * ═══════════════════════════════════════════════════════════════════════════════
+ * RESEARCH PROGRAM: FORMAL FOUNDATIONS
+ * ═══════════════════════════════════════════════════════════════════════════════
+ *
+ * DRIVING OBSERVATION:
+ *   Multiple industrial safety standards (IEC 61508, ISO 26262, DO-178C, ECSS,
+ *   IEC 62304) developed independently, yet practitioners routinely treat them
+ *   as if they were comparable — speaking of "SIL 3 equivalent" systems.
+ *
+ * PUZZLE:
+ *   If these standards are truly incommensurable (different methodologies,
+ *   different risk dimensions, different consequence scales), why does
+ *   cross-standard communication work at all in practice?
+ *
+ * DEFINITION 1 (Safety Standard):
+ *   A safety standard is a tuple S = (L, ≤, ⊥, ⊤, ρ) where:
+ *   - L is a finite set of integrity levels
+ *   - ≤ is a total order on L
+ *   - ⊥ ∈ L is the bottom element (no safety requirements)
+ *   - ⊤ ∈ L is the top element (maximum integrity)
+ *   - ρ: L → R is a (possibly partial) risk reduction function
+ *
+ * DEFINITION 2 (Standards Universe):
+ *   U = {S₁, S₂, ..., Sₙ} where:
+ *   - S₁ = IEC 61508 (industrial)
+ *   - S₂ = ISO 26262 (automotive)
+ *   - S₃ = DO-178C + AC 25.1309 (aviation)
+ *   - S₄ = ECSS-E-ST-40C (space)
+ *   - S₅ = IEC 62304 (medical)
+ *
+ * DEFINITION 3 (Heterogeneity):
+ *   Standards in U are heterogeneous:
+ *   - Methodological: ρᵢ may be quantitative, qualitative, process-based, or severity-only
+ *   - Dimensional: Risk inputs differ (C×F×P×W vs S×E×C vs severity alone)
+ *   - Consequential: Top-level consequences differ in scale
+ *
+ * CENTRAL QUESTION:
+ *   Given a heterogeneous standards universe U with no official inter-standard
+ *   mappings, does there exist a universal construction that:
+ *   (1) Preserves the internal order structure of each standard
+ *   (2) Enables meaningful cross-standard comparison
+ *   (3) Is canonical (not arbitrary)?
+ *
+ * HYPOTHESIS (Cross-Standard Ordinal Coherence):
+ *   There exists a universal ordinal space U = ([0,1], ≤) and a family of
+ *   order-preserving maps {φᵢ: Lᵢ → U} such that:
+ *   - φᵢ(⊥ᵢ) = 0 and φᵢ(⊤ᵢ) = 1 for all i
+ *   - φᵢ preserves order and lattice operations (join = max, meet = min)
+ *
+ * THESIS:
+ *   Although safety standards are methodologically heterogeneous, they share
+ *   a common algebraic structure — that of a bounded total order (chain) with
+ *   a join-semilattice structure for composition. This structure is sufficient
+ *   to define a meaningful universal ordinal space for cross-standard
+ *   communication, even though probability semantics are NOT preserved.
+ *
+ * METHODOLOGICAL POSITION:
+ *   Constructivist — the universal ordinal space is a DELIBERATE CONSTRUCTION
+ *   that sacrifices semantic richness for comparability. The functor is
+ *   explicitly lossy. This enables cross-standard COMMUNICATION, not SUBSTITUTION.
+ *
+ * NON-CLAIMS:
+ *   This mapping does NOT establish:
+ *   - Probability equivalence
+ *   - Process equivalence
+ *   - Legal/regulatory interchangeability
  *
  * ═══════════════════════════════════════════════════════════════════════════════
  * STANDARDS REFERENCED
@@ -23,7 +89,7 @@
  *   Mapping via: SAE ARP4754A (Development of Civil Aircraft and Systems)
  *
  * - ECSS-E-ST-40C - Space Engineering: Software (ESA, 2009)
- *   Note: Explicitly PROHIBITS probabilistic software assessment
+ *   Note: ADVISES AGAINST probabilistic software assessment (per ECSS-Q-HB-80-03A)
  *   Classification based on consequence severity only
  *
  * - IEC 62304:2006/Amd.1:2015 - Medical Device Software Lifecycle
@@ -477,11 +543,12 @@ export const DAL_DEFINITIONS: Record<DesignAssuranceLevel, DALDefinition> = {
  * Software Criticality Categories from ECSS-E-ST-40C
  * European Space Agency standard for space software
  *
- * Reference: ECSS-E-ST-40C (ESA, 2009)
+ * Reference: ECSS-E-ST-40C (ESA, 2009), ECSS-Q-HB-80-03A (guidance)
  *
- * ⚠️ CRITICAL: ECSS-Q-ST-40C Section 5.2.3.1 explicitly states that
- * "probabilistic assessment of software failures is NOT to be used as
- * a criterion for software criticality category assignment."
+ * ⚠️ NOTE: ECSS-Q-HB-80-03A advises against probabilistic assessment
+ * of software failures as a criterion for criticality category assignment.
+ * (Earlier interpretations used stronger "prohibits" language, but the
+ * handbook uses advisory framing.)
  *
  * Classification is based PURELY on:
  * - Consequence severity of function failure
@@ -661,13 +728,39 @@ export const MEDICAL_SOFTWARE_CLASS_DEFINITIONS: Record<
 // UNIVERSAL SAFETY INTEGRITY FORMALIZATION
 // =============================================================================
 //
-// ⚠️ IMPORTANT CAVEATS AND LIMITATIONS:
+// ═══════════════════════════════════════════════════════════════════════════════
+// CATEGORICAL FRAMING: CONSTRUCTED FUNCTORS, NOT DISCOVERED EQUIVALENCES
+// ═══════════════════════════════════════════════════════════════════════════════
 //
-// 1. METHODOLOGICAL INCOMPATIBILITY:
-//    - IEC 61508: Quantitative (probability-based)
-//    - ISO 26262: Qualitative (S×E×C matrix)
+// This framework constructs a COMMON REPRESENTATION (the universal ordinal space)
+// not by claiming the standards are equivalent, but by defining EXPLICIT FUNCTORS
+// from each standard's integrity lattice to a shared codomain [0, 1].
+//
+// In category-theoretic terms (cf. Goguen's institution theory):
+//   - Each standard is an OBJECT in a category of safety classification systems
+//   - The universal ordinal mapping is a FUNCTOR that preserves order structure
+//   - These functors are explicitly LOSSY — they quotient away domain-specific
+//     dimensions (controllability, exposure, architectural requirements) in favor
+//     of ordinal comparability
+//
+// THE UNIVERSAL ORDINAL IS A QUOTIENT:
+//   Two hazards with the same ASIL may have arrived via different S×E×C paths
+//   with genuinely incomparable risk profiles. Example:
+//     - ASIL C from (S3, E2, C2) = high-severity, low-exposure
+//     - ASIL C from (S2, E4, C2) = lower-severity, high-exposure
+//   When mapped to universal ordinal 0.75, this dimensional information is LOST.
+//   This is a DELIBERATE DESIGN CHOICE enabling cross-standard communication,
+//   not a claim about inherent equivalence.
+//
+// ═══════════════════════════════════════════════════════════════════════════════
+// METHODOLOGICAL INCOMPATIBILITY (Why the functor must be lossy)
+// ═══════════════════════════════════════════════════════════════════════════════
+//
+// 1. ASSESSMENT METHODS DIFFER FUNDAMENTALLY:
+//    - IEC 61508: Quantitative (probability-based via risk graph or LOPA)
+//    - ISO 26262: Qualitative (S×E×C matrix → ASIL lookup table)
 //    - DO-178C: Process-based (no probability targets - those come from AC 25.1309)
-//    - ECSS: Severity-based only (explicitly prohibits probabilistic software assessment)
+//    - ECSS: Severity-based only (advises against probabilistic software assessment)
 //    - IEC 62304: Harm severity-based (no probability thresholds)
 //
 // 2. NO OFFICIAL CROSS-STANDARD MAPPING EXISTS:
@@ -676,29 +769,82 @@ export const MEDICAL_SOFTWARE_CLASS_DEFINITIONS: Record<
 //
 // 3. CONSEQUENCE SCALES ARE NOT EQUIVALENT:
 //    - DAL A: Catastrophic aircraft loss (hundreds of deaths)
-//    - ASIL D: At most a loaded passenger vehicle
+//    - ASIL D: At most a loaded passenger vehicle (~6 people max)
 //    - SIL 4: Industrial plant with defined exposure zones
 //
 // 4. DEMAND MODES DIFFER:
 //    IEC 61508 distinguishes low-demand (PFD) vs continuous/high-demand (PFH)
 //    Other standards don't make this distinction
 //
-// Mathematical foundation: Each individual standard's levels form a bounded
-// join-semilattice. Cross-standard comparison is APPROXIMATE and NON-NORMATIVE.
+// ═══════════════════════════════════════════════════════════════════════════════
+// MATHEMATICAL FOUNDATION (Within each standard)
+// ═══════════════════════════════════════════════════════════════════════════════
 //
-// Key axioms (within a single standard):
+// Each individual standard's levels form a bounded join-semilattice (total order).
+// Cross-standard comparison uses CONSTRUCTED FUNCTORS to a shared ordinal space.
+//
+// Key axioms (WITHIN a single standard - these are VERIFIED):
 // 1. (L, ≤) is a total order (all levels comparable)
 // 2. ⊥ ≤ x for all x ∈ L (bottom is least element)
 // 3. x ≤ ⊤ for all x ∈ L (top is greatest element)
 // 4. x ⊔ y = max(x, y) (composition takes worst case - SIMPLIFIED model)
 // 5. Monotonicity: if x ≤ y then f(x) ≤ f(y) for all valid transformations f
 //
+// CROSS-STANDARD ordering is a CONSTRUCTED functor to [0,1], NOT a discovered
+// property of the standards. The join(SIL_2, ASIL_C) operation presupposes
+// the ordinal mapping — it doesn't derive it.
+//
 // Note: Actual standards allow decomposition (e.g., SIL 3 → SIL 2 + SIL 1 with
-// redundancy + independence). This simplified model doesn't capture that.
+// redundancy + independence). This simplified model doesn't capture that fully.
+// =============================================================================
+
+// =============================================================================
+// FORMAL DOMAIN SPACE (TypeScript realization of mathematical definitions)
+// =============================================================================
+// See THEORY.md for full mathematical treatment
 // =============================================================================
 
 /**
+ * Definition 1 (Safety Standard) — TypeScript realization
+ *
+ * A safety standard S = (L, ≤, ⊥, ⊤, ρ) where:
+ * - L: finite set of integrity levels (the `levels` array)
+ * - ≤: total order on L (the `compare` function)
+ * - ⊥: bottom element (the `bottom` property)
+ * - ⊤: top element (the `top` property)
+ * - ρ: risk reduction function (the `toUniversal` method, partially)
+ *
+ * This interface captures the algebraic structure shared by all safety standards.
+ */
+export interface SafetyStandardStructure<L extends IntegrityLevel> {
+	/** The carrier set L of integrity levels */
+	readonly levels: readonly L[];
+	/** Bottom element ⊥ (no safety requirements) */
+	readonly bottom: L;
+	/** Top element ⊤ (maximum integrity) */
+	readonly top: L;
+	/** The total order ≤ on L */
+	compare(a: L, b: L): Ordering;
+	/** The standard's identifier in the standards universe */
+	readonly standardId: StandardIdentifier;
+}
+
+/**
+ * Definition 2 (Standards Universe) — Identifiers
+ *
+ * U = {S₁, S₂, ..., Sₙ} enumeration
+ */
+export enum StandardIdentifier {
+	IEC_61508 = "IEC_61508", // S₁ - Industrial
+	ISO_26262 = "ISO_26262", // S₂ - Automotive
+	DO_178C = "DO_178C", // S₃ - Aviation (+ AC 25.1309)
+	ECSS = "ECSS", // S₄ - Space
+	IEC_62304 = "IEC_62304", // S₅ - Medical
+}
+
+/**
  * Assessment methodology used by a safety standard
+ * (Moved before STANDARDS_UNIVERSE to avoid forward reference)
  */
 export enum AssessmentMethodology {
 	QUANTITATIVE_PROBABILITY = "quantitative_probability", // IEC 61508
@@ -706,6 +852,104 @@ export enum AssessmentMethodology {
 	PROCESS_BASED = "process_based", // DO-178C
 	SEVERITY_BASED = "severity_based", // ECSS, IEC 62304
 }
+
+/**
+ * Definition 3 (Heterogeneity) — TypeScript encoding
+ *
+ * Captures the different types of heterogeneity across standards
+ */
+export interface StandardHeterogeneity {
+	/** Methodological heterogeneity: how ρ is defined */
+	readonly methodology: AssessmentMethodology;
+	/** Dimensional heterogeneity: what risk inputs are used */
+	readonly riskDimensions: readonly string[];
+	/** Consequential heterogeneity: scale of top-level consequences */
+	readonly consequenceScale: ConsequenceScaleDescription;
+}
+
+export interface ConsequenceScaleDescription {
+	readonly domain: string;
+	readonly typicalTopConsequence: string;
+	readonly approximateCasualties: string;
+}
+
+/**
+ * The Standards Universe — instantiation of Definition 2
+ */
+export const STANDARDS_UNIVERSE: Record<StandardIdentifier, StandardHeterogeneity> = {
+	[StandardIdentifier.IEC_61508]: {
+		methodology: AssessmentMethodology.QUANTITATIVE_PROBABILITY,
+		riskDimensions: ["Consequence", "Frequency", "Probability", "Avoidance"],
+		consequenceScale: {
+			domain: "Industrial",
+			typicalTopConsequence: "Plant explosion with exposure zone",
+			approximateCasualties: "Varies by exposure zone definition",
+		},
+	},
+	[StandardIdentifier.ISO_26262]: {
+		methodology: AssessmentMethodology.QUALITATIVE_MATRIX,
+		riskDimensions: ["Severity", "Exposure", "Controllability"],
+		consequenceScale: {
+			domain: "Automotive",
+			typicalTopConsequence: "Loaded passenger vehicle collision",
+			approximateCasualties: "~6 people maximum",
+		},
+	},
+	[StandardIdentifier.DO_178C]: {
+		methodology: AssessmentMethodology.PROCESS_BASED,
+		riskDimensions: ["Failure Condition Severity"],
+		consequenceScale: {
+			domain: "Aviation",
+			typicalTopConsequence: "Aircraft loss",
+			approximateCasualties: "Hundreds",
+		},
+	},
+	[StandardIdentifier.ECSS]: {
+		methodology: AssessmentMethodology.SEVERITY_BASED,
+		riskDimensions: ["Consequence Severity", "Compensating Provisions"],
+		consequenceScale: {
+			domain: "Space",
+			typicalTopConsequence: "Mission loss / crew fatality",
+			approximateCasualties: "Crew size (typically 3-7)",
+		},
+	},
+	[StandardIdentifier.IEC_62304]: {
+		methodology: AssessmentMethodology.SEVERITY_BASED,
+		riskDimensions: ["Harm Severity"],
+		consequenceScale: {
+			domain: "Medical",
+			typicalTopConsequence: "Patient death",
+			approximateCasualties: "Typically single patient",
+		},
+	},
+};
+
+/**
+ * Definition 4 (Universal Ordinal Functor) — TypeScript signature
+ *
+ * φᵢ: Lᵢ → [0,1] mapping each standard's levels to the universal ordinal space
+ *
+ * The functor maps: φᵢ(ℓⱼ) = j / (kᵢ - 1) for j ∈ {0, 1, ..., kᵢ - 1}
+ * where kᵢ = |Lᵢ| is the number of levels in standard i
+ */
+export type UniversalOrdinalFunctor<L extends IntegrityLevel> = (level: L) => number;
+
+/**
+ * Create a universal ordinal functor for a given standard
+ *
+ * This implements Definition 4 from the theory:
+ * φᵢ(ℓⱼ) = j / (kᵢ - 1)
+ */
+export function createUniversalOrdinalFunctor<L extends IntegrityLevel>(
+	levels: readonly L[],
+): UniversalOrdinalFunctor<L> {
+	const maxOrdinal = levels.length - 1;
+	return (level: L) => level.ordinal / maxOrdinal;
+}
+
+// =============================================================================
+// CONSEQUENCE & PROBABILITY TYPES
+// =============================================================================
 
 /**
  * Normalized consequence severity
@@ -738,7 +982,7 @@ export enum IEC61508OperatingMode {
  * Other standards either:
  * - Have no probability targets (ISO 26262 ASIL A, DO-178C)
  * - Get probability from separate documents (DO-178C + AC 25.1309)
- * - Explicitly prohibit probabilistic assessment (ECSS for software)
+ * - Advise against probabilistic assessment (ECSS for software, per ECSS-Q-HB-80-03A)
  */
 export interface FailureProbabilityBound {
 	/** Upper bound (worst acceptable) */
@@ -761,9 +1005,28 @@ export interface NumericRange {
 /**
  * Abstract safety integrity level - the universal type
  *
- * ⚠️ IMPORTANT: This is a THEORETICAL construct for comparison.
- * It does NOT represent how any actual standard works.
+ * ═══════════════════════════════════════════════════════════════════════════════
+ * ⚠️ THEORETICAL CONSTRUCT — QUOTIENT SEMANTICS
+ * ═══════════════════════════════════════════════════════════════════════════════
+ *
+ * This is a DELIBERATELY LOSSY representation. Each standard-specific level is
+ * mapped via a FUNCTOR (toUniversal) to this common codomain.
+ *
+ * WHAT IS PRESERVED:
+ *   - Ordinal ordering (higher = more stringent)
+ *   - Lattice operations (join = max, meet = min)
+ *   - Probability bounds where they exist
+ *
+ * WHAT IS QUOTIENT'D AWAY (LOST):
+ *   - ISO 26262: S×E×C decomposition (why a level was assigned)
+ *   - IEC 61508: Demand mode (low-demand vs continuous)
+ *   - DO-178C: Objective counts and independence requirements
+ *   - ECSS: Compensating provisions
+ *   - Domain-specific consequence scales
+ *
+ * The universal ordinal enables cross-standard COMMUNICATION, not SUBSTITUTION.
  * Cross-standard mappings are APPROXIMATE and NON-NORMATIVE.
+ * ═══════════════════════════════════════════════════════════════════════════════
  */
 export interface UniversalIntegrityLevel {
 	/**
@@ -781,7 +1044,7 @@ export interface UniversalIntegrityLevel {
 	 * ⚠️ NULL for standards that don't use probability:
 	 * - ISO 26262 ASIL A (no target)
 	 * - DO-178C (process-based, no probability)
-	 * - ECSS (severity-based, prohibits probabilistic assessment for software)
+	 * - ECSS (severity-based, advises against probabilistic assessment for software)
 	 * - IEC 62304 (harm severity-based, no probability)
 	 */
 	readonly failureProbability: FailureProbabilityBound | null;
@@ -1064,8 +1327,8 @@ export interface CrossStandardMapping {
  *    - ISO 26262: Qualitative (S×E×C matrix) - explicitly states "no normative
  *                 nor informative mapping of ASIL to SIL" [Wikipedia]
  *    - DO-178C: Process-based (no probability targets - those come from AC 25.1309)
- *    - ECSS: Severity-based only (explicitly prohibits probabilistic software
- *            assessment per ECSS-Q-ST-40C)
+ *    - ECSS: Severity-based only (advises against probabilistic software
+ *            assessment per ECSS-Q-HB-80-03A)
  *    - IEC 62304: Harm severity-based (no probability thresholds)
  *
  * 2. CONSEQUENCE SCALES ARE NOT EQUIVALENT:
@@ -1113,7 +1376,7 @@ fundamentally different methodologies:
 - IEC 61508: Quantitative probability
 - ISO 26262: Qualitative S×E×C matrix
 - DO-178C: Process-based (probability from AC 25.1309)
-- ECSS: Severity-based (prohibits probabilistic software assessment)
+- ECSS: Severity-based (advises against probabilistic software assessment)
 - IEC 62304: Harm severity-based
 
 No official cross-standard mapping exists.
@@ -1208,9 +1471,15 @@ export const STANDARD_ISOMORPHISM: CrossStandardMapping = {
 				ECSS: "A",
 				IEC_62304: "Class_C", // ⚠️ IEC 62304 has no probability targets
 			},
-			meaning: "Highest integrity (closest probability alignment, but still differs)",
+			meaning: "Highest integrity (ordinal equivalence; see scholarly note below)",
 			confidence: MappingConfidence.MEDIUM,
-			// SIL 4 (10⁻⁸-10⁻⁹) overlaps with ASIL D (<10⁻⁸) and DAL A (≤10⁻⁹)
+			// ⚠️ SCHOLARLY NOTE (Verhulst et al., SAFECOMP 2013):
+			// ASIL D may correspond more closely to SIL 3 than SIL 4 in practice.
+			// Reasoning: ISO 26262 targets single-channel automotive systems (not fault-tolerant),
+			// while SIL 4 typically requires redundant MooN architectures.
+			// Maximum automotive casualties (~6 people) don't approach SIL 4 consequence scales.
+			// This mapping uses ordinal equivalence (highest = highest) for theoretical consistency,
+			// but practitioners should note this scholarly critique.
 			verifiedPairs: [
 				["IEC_61508:SIL_4", "ISO_26262:ASIL_D"],
 				["IEC_61508:SIL_4", "DO_178C:DAL_A"],
