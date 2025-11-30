@@ -10,13 +10,18 @@ This report traces the transformation of a lattice-theoretic safety integrity le
 
 The initial submission consisted of four key documents representing a comprehensive research program in formal foundations for safety engineering:
 
-**Mathematical Framework (THEORY.md)**: A rigorous formalization proposing that heterogeneous safety standards (IEC 61508, ISO 26262, DO-178C, ECSS, IEC 62304) share a common algebraic structure—bounded total orders with join-semilattice composition. The framework constructs explicit functors mapping each standard to a universal ordinal space [0,1], preserving order structure while explicitly acknowledging loss of probability semantics and dimensional information.
+**Mathematical Framework (docs/THEORY.md)**: A rigorous formalization proposing that heterogeneous safety standards (IEC 61508, ISO 26262, DO-178C, ECSS, IEC 62304) share a common algebraic structure—bounded total orders with join-semilattice composition. The framework constructs explicit functors mapping each standard to a universal ordinal space [0,1], preserving order structure while explicitly acknowledging loss of probability semantics and dimensional information.
 
-**Implementation (system-classification.ts)**: A TypeScript implementation demonstrating the framework's practical realizability. The code defines SafetyLattice interfaces, implements verification functions for lattice axioms, provides cross-standard translation with confidence metrics, and includes warning systems for lossy mappings.
+**Implementation (src/shared/)**: A TypeScript implementation demonstrating the framework's practical realizability, organized in three layers:
+
+- **lattice-theory.ts**: Domain-agnostic abstract mathematics—BoundedLattice, OrderedElement, Galois connections, lattice homomorphisms, and composition operators.
+- **safety-standards.ts**: Safety-specific instantiations—SIL/ASIL/DAL lattices, cross-standard mapping with confidence metrics, probability calculus, and verification functions for lattice axioms.
+- **risk-assessment.ts**: Comprehensive practical risk assessment—security classification, availability tiers, data sensitivity, organizational readiness, economic impact, supply chain risk, engineering constraints derivation, and compliance gap analysis.
+- **index.ts**: Unified barrel file re-exporting all public APIs.
 
 **Research Papers**: Two academic papers exploring (1) novel mathematical directions including Galois connections, institution theory, quantale-enriched categories, sheaf theory, and resource theories, and (2) verification of claims showing which aspects of the framework are mathematically sound versus problematic when compared to actual standard requirements.
 
-**Documentation (README.md)**: Comprehensive explanation positioning the framework as a "categorical framework for cross-standard safety communication" with extensive caveats about what it does and does not claim.
+**Documentation (src/shared/README.md)**: Comprehensive explanation positioning the framework as a "categorical framework for cross-standard safety communication" with extensive caveats about what it does and does not claim.
 
 ### Core Intellectual Contribution
 
