@@ -1,0 +1,176 @@
+/**
+ * Global Styles (ADR-112)
+ * CSS variables derived from design-tokens.ts
+ */
+
+/* ============================================================================
+   CSS RESET
+   ============================================================================ */
+
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+}
+
+html {
+	font-size: 16px;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+/* ============================================================================
+   CSS CUSTOM PROPERTIES (from design-tokens.ts)
+   ============================================================================ */
+
+:root {
+	/* Background Colors */
+	--color-bg-primary: #0a0a0f;
+	--color-bg-secondary: #12121a;
+	--color-bg-tertiary: #1a1a24;
+	--color-bg-elevated: #22222e;
+	--color-bg-overlay: rgba(0, 0, 0, 0.7);
+
+	/* Text Colors */
+	--color-text-primary: #f0f0f5;
+	--color-text-secondary: #a0a0b0;
+	--color-text-muted: #606070;
+	--color-text-inverse: #0a0a0f;
+
+	/* Accent Colors */
+	--color-accent-primary: #6366f1;
+	--color-accent-primaryHover: #818cf8;
+	--color-accent-success: #22c55e;
+	--color-accent-warning: #f59e0b;
+	--color-accent-error: #ef4444;
+	--color-accent-info: #3b82f6;
+
+	/* Border Colors */
+	--color-border-subtle: rgba(255, 255, 255, 0.06);
+	--color-border-default: rgba(255, 255, 255, 0.1);
+	--color-border-strong: rgba(255, 255, 255, 0.2);
+	--color-border-accent: #6366f1;
+
+	/* Fonts */
+	--font-sans: "Plus Jakarta Sans", system-ui, sans-serif;
+	--font-mono: "JetBrains Mono", "Fira Code", monospace;
+
+	/* Font Sizes */
+	--font-size-xs: 0.75rem;
+	--font-size-sm: 0.875rem;
+	--font-size-base: 1rem;
+	--font-size-lg: 1.125rem;
+	--font-size-xl: 1.25rem;
+	--font-size-2xl: 1.5rem;
+	--font-size-3xl: 2rem;
+	--font-size-4xl: 2.5rem;
+
+	/* Spacing */
+	--spacing-0: 0;
+	--spacing-1: 0.25rem;
+	--spacing-2: 0.5rem;
+	--spacing-3: 0.75rem;
+	--spacing-4: 1rem;
+	--spacing-5: 1.25rem;
+	--spacing-6: 1.5rem;
+	--spacing-8: 2rem;
+	--spacing-10: 2.5rem;
+	--spacing-12: 3rem;
+	--spacing-16: 4rem;
+	--spacing-20: 5rem;
+
+	/* Border Radius */
+	--radius-none: 0;
+	--radius-sm: 0.25rem;
+	--radius-md: 0.5rem;
+	--radius-lg: 0.75rem;
+	--radius-xl: 1rem;
+	--radius-full: 9999px;
+
+	/* Shadows */
+	--shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+	--shadow-md: 0 4px 6px rgba(0, 0, 0, 0.4);
+	--shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.5);
+	--shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.6);
+	--shadow-glow: 0 0 20px rgba(99, 102, 241, 0.25);
+
+	/* Transitions */
+	--transition-fast: 150ms ease;
+	--transition-normal: 250ms ease;
+	--transition-slow: 400ms ease;
+}
+
+/* ============================================================================
+   BASE STYLES
+   ============================================================================ */
+
+body {
+	font-family: var(--font-sans);
+	font-size: var(--font-size-base);
+	line-height: 1.5;
+	color: var(--color-text-primary);
+	background-color: var(--color-bg-primary);
+	min-height: 100vh;
+}
+
+#root {
+	min-height: 100vh;
+	display: flex;
+	flex-direction: column;
+}
+
+/* ============================================================================
+   APP LAYOUT
+   ============================================================================ */
+
+.app {
+	display: flex;
+	flex-direction: column;
+	min-height: 100vh;
+	padding: var(--spacing-8);
+}
+
+.app-header {
+	display: flex;
+	align-items: center;
+	gap: var(--spacing-3);
+	margin-bottom: var(--spacing-8);
+}
+
+.app-header h1 {
+	font-size: var(--font-size-3xl);
+	font-weight: 600;
+	background: linear-gradient(135deg, var(--color-accent-primary), var(--color-accent-primaryHover));
+	-webkit-background-clip: text;
+	background-clip: text;
+	-webkit-text-fill-color: transparent;
+}
+
+.app-icon {
+	width: 2.5rem;
+	height: 2.5rem;
+	color: var(--color-accent-primary);
+}
+
+.app-content {
+	flex: 1;
+	color: var(--color-text-secondary);
+}
+
+/* ============================================================================
+   UTILITY CLASSES
+   ============================================================================ */
+
+.visually-hidden {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	padding: 0;
+	margin: -1px;
+	overflow: hidden;
+	clip: rect(0, 0, 0, 0);
+	white-space: nowrap;
+	border: 0;
+}

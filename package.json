@@ -1,0 +1,55 @@
+{
+	"name": "ts-audit",
+	"version": "0.1.0",
+	"type": "module",
+	"engines": {
+		"node": ">=22.0.0",
+		"pnpm": ">=9.0.0"
+	},
+	"packageManager": "pnpm@9.14.2",
+	"scripts": {
+		"dev": "vite",
+		"dev:server": "tsx watch src/server/index.ts",
+		"build": "tsc -b && vite build",
+		"build:server": "tsc -p tsconfig.server.json",
+		"preview": "vite preview",
+		"test": "vitest run",
+		"test:watch": "vitest",
+		"test:coverage": "vitest run --coverage",
+		"test:quick": "vitest run --reporter=dot",
+		"lint": "biome check .",
+		"lint:fix": "biome check --write .",
+		"format": "biome format --write .",
+		"check": "biome check . && tsc --noEmit",
+		"typecheck": "tsc --noEmit",
+		"knip": "knip",
+		"tokens:generate": "tsx scripts/generate-tokens.ts",
+		"tokens:verify": "tsx scripts/verify-tokens.ts",
+		"prepare": "simple-git-hooks"
+	},
+	"dependencies": {
+		"lucide-react": "^0.460.0",
+		"react": "^18.3.1",
+		"react-dom": "^18.3.1",
+		"tslog": "^4.9.3"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "^1.9.4",
+		"@testing-library/react": "^16.0.1",
+		"@types/node": "^22.9.0",
+		"@types/react": "^18.3.12",
+		"@types/react-dom": "^18.3.1",
+		"@vitejs/plugin-react": "^4.3.3",
+		"@vitest/coverage-v8": "^2.1.5",
+		"happy-dom": "^15.11.0",
+		"knip": "^5.36.0",
+		"simple-git-hooks": "^2.11.1",
+		"tsx": "^4.19.2",
+		"typescript": "^5.6.3",
+		"vite": "^5.4.11",
+		"vitest": "^2.1.5"
+	},
+	"simple-git-hooks": {
+		"pre-commit": "pnpm lint && pnpm test:quick"
+	}
+}

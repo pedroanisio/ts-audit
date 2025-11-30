@@ -1,0 +1,14 @@
+{
+	"$schema": "https://unpkg.com/knip@5/schema.json",
+	"entry": ["src/client/main.tsx", "src/server/index.ts", "src/shared/index.ts"],
+	"project": ["src/**/*.ts", "src/**/*.tsx"],
+	"ignore": ["**/*.d.ts", "**/test/**", "**/tests/**"],
+	"ignoreDependencies": ["@vitejs/plugin-react"],
+	"rules": {
+		"files": "error",
+		"dependencies": "error",
+		"unlisted": "error",
+		"exports": "warn",
+		"types": "warn"
+	}
+}
