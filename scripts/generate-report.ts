@@ -28,7 +28,7 @@ import {
 	deriveRequiredSIL,
 	verifyLatticeAxioms,
 	verifySILCompliance,
-} from "./index.js";
+} from "../src/shared/index.js";
 
 // =============================================================================
 // REPORT DATA GENERATION

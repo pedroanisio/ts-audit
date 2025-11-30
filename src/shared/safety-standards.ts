@@ -1590,8 +1590,233 @@ export const DAL_LATTICE: SafetyLattice<DALLevel> = {
 	},
 };
 
+// ECSS Lattice (Space Software Criticality)
+interface ECSSLevel extends IntegrityLevel {
+	readonly ecss: SpaceSoftwareCriticality;
+}
+
+// Note: ECSS ordering is A (highest) to D (lowest) - opposite of IEC 62304
+const ECSS_A: ECSSLevel = {
+	id: "ECSS_A",
+	name: "ECSS_A",
+	ordinal: 4,
+	ecss: SpaceSoftwareCriticality.CATEGORY_A,
+};
+const ECSS_B: ECSSLevel = {
+	id: "ECSS_B",
+	name: "ECSS_B",
+	ordinal: 3,
+	ecss: SpaceSoftwareCriticality.CATEGORY_B,
+};
+const ECSS_C: ECSSLevel = {
+	id: "ECSS_C",
+	name: "ECSS_C",
+	ordinal: 2,
+	ecss: SpaceSoftwareCriticality.CATEGORY_C,
+};
+const ECSS_D: ECSSLevel = {
+	id: "ECSS_D",
+	name: "ECSS_D",
+	ordinal: 1,
+	ecss: SpaceSoftwareCriticality.CATEGORY_D,
+};
+
+const ECSS_LEVELS: readonly ECSSLevel[] = [ECSS_D, ECSS_C, ECSS_B, ECSS_A];
+
+export const ECSS_LATTICE: SafetyLattice<ECSSLevel> = {
+	levels: ECSS_LEVELS,
+	bottom: ECSS_D,
+	top: ECSS_A,
+	compare: compareByOrdinal,
+	join: joinByOrdinal,
+	meet: meetByOrdinal,
+	toUniversal(level: ECSSLevel): UniversalIntegrityLevel {
+		// ECSS has no probability targets - severity-based only
+		return {
+			ordinal: normalizeOrdinal(level.ordinal),
+			failureProbability: null,
+			riskReductionFactor: null,
+			consequenceSeverity: level.ordinal as ConsequenceSeverity,
+			methodology: AssessmentMethodology.SEVERITY_BASED,
+		};
+	},
+};
+
+// Medical Device Software Lattice (IEC 62304)
+interface MedicalLevel extends IntegrityLevel {
+	readonly medicalClass: MedicalDeviceSoftwareClass;
+}
+
+// Note: IEC 62304 ordering is A (lowest) to C (highest)
+const MEDICAL_A: MedicalLevel = {
+	id: "CLASS_A",
+	name: "CLASS_A",
+	ordinal: 1,
+	medicalClass: MedicalDeviceSoftwareClass.CLASS_A,
+};
+const MEDICAL_B: MedicalLevel = {
+	id: "CLASS_B",
+	name: "CLASS_B",
+	ordinal: 2,
+	medicalClass: MedicalDeviceSoftwareClass.CLASS_B,
+};
+const MEDICAL_C: MedicalLevel = {
+	id: "CLASS_C",
+	name: "CLASS_C",
+	ordinal: 3,
+	medicalClass: MedicalDeviceSoftwareClass.CLASS_C,
+};
+
+const MEDICAL_LEVELS: readonly MedicalLevel[] = [MEDICAL_A, MEDICAL_B, MEDICAL_C];
+
+export const MEDICAL_LATTICE: SafetyLattice<MedicalLevel> = {
+	levels: MEDICAL_LEVELS,
+	bottom: MEDICAL_A,
+	top: MEDICAL_C,
+	compare: compareByOrdinal,
+	join: joinByOrdinal,
+	meet: meetByOrdinal,
+	toUniversal(level: MedicalLevel): UniversalIntegrityLevel {
+		// IEC 62304 has no probability targets - harm severity-based only
+		// Map 3-level scale to universal ordinal
+		const ordinalMapping: Record<number, number> = {
+			1: 0.25, // Class A → low
+			2: 0.5, // Class B → medium
+			3: 0.75, // Class C → high (not full 1.0 as it's a 3-level scale)
+		};
+		return {
+			ordinal: ordinalMapping[level.ordinal] ?? 0.5,
+			failureProbability: null,
+			riskReductionFactor: null,
+			consequenceSeverity:
+				level.ordinal === 1
+					? ConsequenceSeverity.NEGLIGIBLE
+					: level.ordinal === 2
+						? ConsequenceSeverity.SERIOUS
+						: ConsequenceSeverity.CRITICAL,
+			methodology: AssessmentMethodology.SEVERITY_BASED,
+		};
+	},
+};
+
 // =============================================================================
-// SECTION 10: COMPOSITION THEOREMS
+// SECTION 10: SAFETY DOMAIN MAPPINGS
+// =============================================================================
+
+/**
+ * Safety-critical application domains
+ */
+export enum SafetyDomain {
+	// Safety-critical domains (potential for physical harm)
+	AUTOMOTIVE = "automotive",
+	AVIATION = "aviation",
+	RAILWAY = "railway",
+	NUCLEAR = "nuclear",
+	SPACE = "space",
+	MEDICAL_DEVICE = "medical_device",
+	INDUSTRIAL_CONTROL = "industrial_control",
+	MARINE = "marine",
+	DEFENSE = "defense",
+
+	// Non-safety but regulated domains
+	FINTECH = "fintech",
+	HEALTHCARE_IT = "healthcare_it",
+	CRITICAL_INFRASTRUCTURE = "critical_infrastructure",
+}
+
+/**
+ * Mapping from safety domains to applicable primary standards
+ */
+export const SAFETY_DOMAIN_STANDARDS: Record<SafetyDomain, StandardIdentifier[]> = {
+	[SafetyDomain.AUTOMOTIVE]: [StandardIdentifier.ISO_26262],
+	[SafetyDomain.AVIATION]: [StandardIdentifier.DO_178C],
+	[SafetyDomain.RAILWAY]: [StandardIdentifier.IEC_61508], // EN 50128 derives from IEC 61508
+	[SafetyDomain.NUCLEAR]: [StandardIdentifier.IEC_61508],
+	[SafetyDomain.SPACE]: [StandardIdentifier.ECSS],
+	[SafetyDomain.MEDICAL_DEVICE]: [StandardIdentifier.IEC_62304],
+	[SafetyDomain.INDUSTRIAL_CONTROL]: [StandardIdentifier.IEC_61508],
+	[SafetyDomain.MARINE]: [StandardIdentifier.IEC_61508],
+	[SafetyDomain.DEFENSE]: [StandardIdentifier.DO_178C], // Often uses DO-178C or MIL-STD
+	[SafetyDomain.FINTECH]: [], // No safety standards, but regulatory (PCI-DSS, SOC2)
+	[SafetyDomain.HEALTHCARE_IT]: [StandardIdentifier.IEC_62304], // If affects patient safety
+	[SafetyDomain.CRITICAL_INFRASTRUCTURE]: [StandardIdentifier.IEC_61508],
+};
+
+/**
+ * Minimum integrity level by domain
+ * Represents typical baseline requirements for the domain
+ */
+export const SAFETY_DOMAIN_BASELINES: Record<SafetyDomain, number> = {
+	[SafetyDomain.NUCLEAR]: 4, // Highest safety requirements
+	[SafetyDomain.AVIATION]: 4,
+	[SafetyDomain.SPACE]: 4,
+	[SafetyDomain.MEDICAL_DEVICE]: 3,
+	[SafetyDomain.RAILWAY]: 3,
+	[SafetyDomain.AUTOMOTIVE]: 3,
+	[SafetyDomain.DEFENSE]: 3,
+	[SafetyDomain.INDUSTRIAL_CONTROL]: 2,
+	[SafetyDomain.MARINE]: 2,
+	[SafetyDomain.CRITICAL_INFRASTRUCTURE]: 2,
+	[SafetyDomain.HEALTHCARE_IT]: 2,
+	[SafetyDomain.FINTECH]: 2,
+};
+
+/**
+ * Get the appropriate lattice for a given standard
+ */
+export function getLatticeForStandard(
+	standard: StandardIdentifier,
+): SafetyLattice<IntegrityLevel> {
+	switch (standard) {
+		case StandardIdentifier.IEC_61508:
+			return SIL_LATTICE as SafetyLattice<IntegrityLevel>;
+		case StandardIdentifier.ISO_26262:
+			return ASIL_LATTICE as SafetyLattice<IntegrityLevel>;
+		case StandardIdentifier.DO_178C:
+			return DAL_LATTICE as SafetyLattice<IntegrityLevel>;
+		case StandardIdentifier.ECSS:
+			return ECSS_LATTICE as SafetyLattice<IntegrityLevel>;
+		case StandardIdentifier.IEC_62304:
+			return MEDICAL_LATTICE as SafetyLattice<IntegrityLevel>;
+		default:
+			return SIL_LATTICE as SafetyLattice<IntegrityLevel>; // Default to IEC 61508
+	}
+}
+
+/**
+ * Get the primary standard for a safety domain
+ */
+export function getPrimaryStandard(domain: SafetyDomain): StandardIdentifier | null {
+	const standards = SAFETY_DOMAIN_STANDARDS[domain];
+	return standards.length > 0 ? standards[0]! : null;
+}
+
+/**
+ * Get the recommended integrity level for a domain
+ * Returns the level in the domain's primary standard
+ */
+export function getRecommendedLevel(
+	domain: SafetyDomain,
+): { standard: StandardIdentifier; levelName: string; ordinal: number } | null {
+	const standard = getPrimaryStandard(domain);
+	if (!standard) return null;
+
+	const baseline = SAFETY_DOMAIN_BASELINES[domain];
+	const lattice = getLatticeForStandard(standard);
+
+	// Find the level that matches the baseline ordinal
+	const level = lattice.levels.find((l) => l.ordinal === baseline);
+	if (!level) return null;
+
+	return {
+		standard,
+		levelName: level.name,
+		ordinal: baseline,
+	};
+}
+
+// =============================================================================
+// SECTION 11: COMPOSITION THEOREMS
 // =============================================================================
 
 /**

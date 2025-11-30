@@ -25,7 +25,7 @@
 		"knip": "knip",
 		"tokens:generate": "tsx scripts/generate-tokens.ts",
 		"tokens:verify": "tsx scripts/verify-tokens.ts",
-		"report:safety": "tsx src/shared/generate-report.ts",
+		"report:safety": "tsx scripts/generate-report.ts",
 		"prepare": "simple-git-hooks"
 	},
 	"dependencies": {

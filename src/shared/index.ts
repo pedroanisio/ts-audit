@@ -100,7 +100,8 @@ export {
 
 	// Lattice Algebra (safety-specific)
 	AssessmentMethodology,
-	type IntegrityLevel,
+	// Note: IntegrityLevel interface from safety-standards is internal (use OrderedElement for generics)
+	// The practical IntegrityLevel enum is exported from risk-assessment
 	ConsequenceSeverity,
 	IEC61508OperatingMode,
 	type NumericRange,
@@ -133,6 +134,16 @@ export {
 	createSILLowDemandUniversal,
 	ASIL_LATTICE,
 	DAL_LATTICE,
+	ECSS_LATTICE,
+	MEDICAL_LATTICE,
+
+	// Safety Domain Mappings
+	SafetyDomain,
+	SAFETY_DOMAIN_STANDARDS,
+	SAFETY_DOMAIN_BASELINES,
+	getLatticeForStandard,
+	getPrimaryStandard,
+	getRecommendedLevel,
 
 	// Composition Theorems
 	type CompositionContext,
