@@ -7,24 +7,45 @@
  * MODULE STRUCTURE
  * ═══════════════════════════════════════════════════════════════════════════════
  *
- * This module is organized into three layers:
+ * This module is organized into four layers:
  *
- * 1. ABSTRACT THEORY (lattice-theory.ts)
+ * 1. FORMAL CONCEPT ANALYSIS (fca-theory.ts) [NEW]
+ *    - FormalContext, derivation operators, concept lattice
+ *    - Attribute implications, delta computation
+ *    - Use for: Requirement decomposition, cross-standard Form comparison
+ *    - References: Wille (1982), Ganter & Wille (1999)
+ *
+ * 2. LATTICE ALGEBRA (lattice-theory.ts)
  *    - Domain-agnostic lattice algebra
  *    - BoundedLattice, OrderedElement, Galois connections
  *    - Use for: Custom classification systems, formal mathematics
  *
- * 2. SAFETY STANDARDS (safety-standards.ts)
+ * 3. SAFETY STANDARDS (safety-standards.ts)
  *    - IEC 61508 (SIL), ISO 26262 (ASIL), DO-178C (DAL)
  *    - ECSS (Space), IEC 62304 (Medical)
  *    - Cross-standard mapping and probability calculus
  *    - Use for: Safety-critical systems, formal analysis
  *
- * 3. RISK ASSESSMENT (risk-assessment.ts)
+ * 4. RISK ASSESSMENT (risk-assessment.ts)
  *    - Comprehensive risk assessment across ALL dimensions
  *    - Security, Availability, Data, Organizational, Economic
  *    - Supply chain, Operational history, Interconnection risk
  *    - Use for: Practical risk assessment, system classification
+ *
+ * ═══════════════════════════════════════════════════════════════════════════════
+ * KEY DISTINCTION
+ * ═══════════════════════════════════════════════════════════════════════════════
+ *
+ * LEVEL COMPARISON (lattice-theory + safety-standards):
+ *   Question: "Is ASIL D ≥ SIL 3 in ordinal terms?"
+ *   Math: Bounded chains, total order, universal ordinal space
+ *
+ * FORM DECOMPOSITION (fca-theory):
+ *   Question: "What requirements (Forms) does ASIL D have that SIL 3 doesn't?"
+ *   Math: Formal Context, derivation operators, delta computation
+ *
+ * These are COMPLEMENTARY. Level comparison handles ordinal ordering;
+ * Form decomposition handles attribute-level requirement analysis.
  *
  * ═══════════════════════════════════════════════════════════════════════════════
  * USAGE
@@ -32,16 +53,127 @@
  *
  * Option 1: Import from this barrel file (recommended)
  *   import { SafetyIntegrityLevel, UniversalRiskAssessment } from './shared';
+ *   import { computeAttributeDelta, FormalContext } from './shared';
  *
  * Option 2: Import from specific module
  *   import { SIL_LATTICE } from './shared/safety-standards';
- *   import { SecurityClassification } from './shared/risk-assessment';
+ *   import { computeConceptLattice } from './shared/fca-theory';
  *
  * ═══════════════════════════════════════════════════════════════════════════════
  */
 
 // =============================================================================
-// RE-EXPORT: THEORETICAL BRANCH (Safety Standards Theory)
+// RE-EXPORT: ABSTRACT THEORY LAYER 1 (Formal Concept Analysis)
+// =============================================================================
+
+export {
+	// Formal Context
+	type FormalContext,
+	type FormalContextBuilder,
+	createFormalContextBuilder,
+	createFormalContextFromMatrix,
+
+	// Derivation Operators
+	deriveAttributes,
+	deriveObjects,
+	closureObjects,
+	closureAttributes,
+
+	// Formal Concepts
+	type FormalConcept,
+	conceptFromExtent,
+	conceptFromIntent,
+	isValidConcept,
+	compareConcepts,
+
+	// Concept Lattice
+	type ConceptLattice,
+	computeConceptLattice,
+
+	// Attribute Implications
+	type AttributeImplication,
+	holdsImplication,
+	computeImplications,
+	computeStemBase,
+
+	// Delta Computation
+	computeAttributeDelta,
+	computeAttributeSymmetricDelta,
+	computeSharedAttributes,
+	findObjectsWithAttributes,
+
+	// Context Operations
+	subcontext,
+	apposition,
+	subposition,
+
+	// Visualization & Validation
+	contextToCrossTable,
+	describeConcept,
+	describeConceptLattice,
+	validateContext,
+	validateConceptLattice,
+} from "./fca-theory";
+
+// =============================================================================
+// RE-EXPORT: FORMS LAYER (Atomic Requirements)
+// =============================================================================
+
+export {
+	// Form types
+	FormCategory,
+	type Form,
+	FORMS,
+
+	// Extraction functions
+	extractTestingForms,
+	extractArchitectureForms,
+	extractProcessForms,
+	extractScopingForms,
+	extractDocumentationForms,
+	extractAllForms,
+
+	// Formal Context for Forms
+	buildIntegrityFormsContext,
+	getIntegrityFormsContext,
+	getIntegrityFormsLattice,
+
+	// Delta operations
+	computeFormsDelta,
+	computeFormsSymmetricDelta,
+	computeSharedForms,
+	getFormsForLevel,
+	getDeltaFormsWithMetadata,
+
+	// Reporting
+	generateFormReport,
+	generateDeltaReport,
+	generateFormMatrix,
+
+	// Individual Forms (for direct import)
+	UNIT_TESTING,
+	INTEGRATION_TESTING,
+	SYSTEM_TESTING,
+	FAULT_INJECTION,
+	INDEPENDENT_VERIFICATION,
+	STMT_COV_60,
+	STMT_COV_80,
+	STMT_COV_90,
+	STMT_COV_100,
+	MCDC_COV_80,
+	MCDC_COV_100,
+	REDUNDANCY_HOT_STANDBY,
+	REDUNDANCY_ACTIVE_ACTIVE,
+	REDUNDANCY_VOTING,
+	CODE_REVIEW,
+	FORMAL_INSPECTION,
+	TRACEABILITY,
+	ASSURANCE_CASE,
+	HAZARD_ANALYSIS,
+} from "./forms";
+
+// =============================================================================
+// RE-EXPORT: ABSTRACT THEORY LAYER 2 (Safety Standards Theory)
 // =============================================================================
 
 export {
@@ -389,30 +521,44 @@ export function createSystemClassification(
 // =============================================================================
 
 /**
- * Three-layer architecture:
+ * Four-layer architecture:
  *
  * ┌─────────────────────────────────────────────────────────────────────────────┐
  * │                              index.ts                                       │
  * │                         (Unified Entry Point)                               │
  * └─────────────────────────────────────────────────────────────────────────────┘
  *                                    │
- *        ┌───────────────────────────┼───────────────────────────┐
- *        │                           │                           │
- *        ▼                           ▼                           ▼
- * ┌──────────────────┐    ┌──────────────────┐    ┌──────────────────────────┐
- * │ lattice-theory   │    │ safety-standards │    │    risk-assessment       │
- * │                  │    │                  │    │                          │
- * │ ABSTRACT MATH    │    │ SAFETY STANDARDS │    │ PRACTICAL ASSESSMENT     │
- * │                  │    │                  │    │                          │
- * │ • BoundedLattice │───▶│ • SIL (IEC61508) │───▶│ • Security classification│
- * │ • OrderedElement │    │ • ASIL (ISO26262)│    │ • Availability (SLA/RTO) │
- * │ • Galois connect │    │ • DAL (DO-178C)  │    │ • Data classification    │
- * │ • Homomorphisms  │    │ • ECSS (Space)   │    │ • Org readiness          │
- * │ • Registry       │    │ • IEC62304 (Med) │    │ • Economic impact        │
- * │ • Composition    │    │ • Probability    │    │ • Supply chain risk      │
- * │                  │    │ • Cross-mapping  │    │ • Engineering constraints│
- * │ Domain-agnostic  │    │                  │    │ • Compliance gap analysis│
- * └──────────────────┘    └──────────────────┘    └──────────────────────────┘
+ *    ┌───────────────┬───────────────┼───────────────┬───────────────┐
+ *    │               │               │               │               │
+ *    ▼               ▼               ▼               ▼               │
+ * ┌────────────┐ ┌────────────┐ ┌────────────┐ ┌──────────────────┐  │
+ * │ fca-theory │ │  lattice-  │ │  safety-   │ │ risk-assessment  │  │
+ * │            │ │   theory   │ │  standards │ │                  │  │
+ * │  FORMAL    │ │  LATTICE   │ │   SAFETY   │ │    PRACTICAL     │  │
+ * │  CONCEPT   │ │  ALGEBRA   │ │  STANDARDS │ │   ASSESSMENT     │  │
+ * │ ANALYSIS   │ │            │ │            │ │                  │  │
+ * │            │ │ • Bounded  │ │ • SIL      │ │ • Security       │◀─┘
+ * │ • Context  │ │   Lattice  │ │ • ASIL     │ │ • Availability   │
+ * │ • Concepts │ │ • Galois   │ │ • DAL      │ │ • Data           │
+ * │ • Lattice  │ │ • Homo-    │ │ • ECSS     │ │ • Organizational │
+ * │ • Implic-  │ │   morphism │ │ • Medical  │ │ • Economic       │
+ * │   ations   │ │ • Registry │ │ • Prob.    │ │ • Supply chain   │
+ * │ • Deltas   │ │ • Compose  │ │ • Mapping  │ │ • Constraints    │
+ * └────────────┘ └────────────┘ └────────────┘ └──────────────────┘
+ *       │               │               │               │
+ *       │               └───────┬───────┘               │
+ *       │                       │                       │
+ *       │     LEVEL COMPARISON  │  FORM DECOMPOSITION   │
+ *       │     (ordinal order)   │  (attribute sets)     │
+ *       └───────────────────────┴───────────────────────┘
  *
- * DEPENDENCY FLOW: lattice-theory → safety-standards → risk-assessment → index
+ * MATHEMATICAL FOUNDATION:
+ *   - fca-theory: Formal Concept Analysis (Wille 1982, Ganter & Wille 1999)
+ *   - lattice-theory: Lattice algebra, Galois connections
+ *   - safety-standards: Cross-standard mapping via universal ordinal space
+ *   - risk-assessment: Practical constraint derivation
+ *
+ * KEY INSIGHT:
+ *   Level comparison (lattice-theory) answers "Is ASIL D ≥ SIL 3 ordinally?"
+ *   Form decomposition (fca-theory) answers "What requirements does ASIL D have that SIL 3 doesn't?"
  */
