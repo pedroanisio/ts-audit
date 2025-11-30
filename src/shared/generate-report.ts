@@ -28,7 +28,7 @@ import {
 	deriveRequiredSIL,
 	verifyLatticeAxioms,
 	verifySILCompliance,
-} from "./system-classification.js";
+} from "./index.js";
 
 // =============================================================================
 // REPORT DATA GENERATION

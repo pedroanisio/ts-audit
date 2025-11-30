@@ -94,7 +94,7 @@ Within each standard, integrity levels form a **bounded total order (chain)**:
 ### Basic Lattice Operations
 
 ```typescript
-import { SIL_LATTICE, ASIL_LATTICE, Ordering } from './system-classification';
+import { SIL_LATTICE, ASIL_LATTICE, Ordering } from './shared';
 
 // Compare integrity levels (within a standard - fully supported)
 const comparison = SIL_LATTICE.compare(SIL_2, SIL_3);
@@ -113,7 +113,7 @@ const universal = SIL_LATTICE.toUniversal(SIL_3);
 ### Cross-Standard Translation (with strong caveats!)
 
 ```typescript
-import { translateIntegrity, getMappingConfidence } from './system-classification';
+import { translateIntegrity, getMappingConfidence } from './shared';
 
 // ⚠️ WARNING: This is ordinal correspondence, NOT equivalence
 // The function logs a warning about approximate mapping
@@ -132,7 +132,7 @@ import {
   createAutomotiveClassification,
   createMedicalImplantClassification,
   AutomotiveSafetyIntegrityLevel 
-} from './system-classification';
+} from './shared';
 
 // Create a classified system
 const brakeECU = createAutomotiveClassification(

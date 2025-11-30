@@ -408,7 +408,7 @@ From quantum information theory: model failure probability allocations as **reso
 │                    ABSTRACT THEORY                                  │
 │                    (Domain-Agnostic)                                │
 │                                                                     │
-│  integrity-classification-theory.ts                                 │
+│  lattice-theory.ts                                                  │
 │  ─────────────────────────────────────────────────                  │
 │  • BoundedLattice<E>        - Definition 1                          │
 │  • ImpactSpace              - Definition 2                          │
@@ -422,30 +422,37 @@ From quantum information theory: model failure probability allocations as **reso
                                 │ INSTANTIATION
                                 ▼
 ┌─────────────────────────────────────────────────────────────────────┐
-│                    APPLICATION                                      │
-│                    (Safety Standards)                               │
+│                    SAFETY STANDARDS                                 │
+│                    (Domain-Specific)                                │
 │                                                                     │
-│  safety-standards-application.ts                                    │
+│  safety-standards.ts                                                │
 │  ─────────────────────────────────────────────────                  │
 │  • SIL_LATTICE              - IEC 61508 instance                    │
 │  • ASIL_LATTICE             - ISO 26262 instance                    │
 │  • DAL_LATTICE              - DO-178C instance                      │
-│  • ISO26262_IMPACT_SPACE    - S×E×C dimensions                      │
-│  • SIL_CONSTRAINTS          - Derived constraints                   │
-│  • SIL_ASIL_GALOIS          - Cross-standard connection             │
+│  • Cross-standard mapping   - Universal ordinal functor             │
+│  • Probability calculus     - PFD/PFH conversions                   │
+│  • Composition theorems     - System-level analysis                 │
 └─────────────────────────────────────────────────────────────────────┘
                                 │
                                 │ OPERATIONALIZATION
                                 ▼
 ┌─────────────────────────────────────────────────────────────────────┐
-│                    PRACTICAL TOOLS                                  │
+│                    RISK ASSESSMENT                                  │
 │                                                                     │
-│  impact-assessment-framework.ts                                     │
+│  risk-assessment.ts                                                 │
 │  ─────────────────────────────────────────────────                  │
-│  • assessProject()          - Full assessment pipeline              │
-│  • QUICK_PROFILES           - Common project types                  │
-│  • checkCompliance()        - Gap analysis                          │
-│  • generateChecklist()      - Actionable outputs                    │
+│  • UniversalRiskAssessment  - Full risk profile                     │
+│  • Security/Availability    - Non-safety dimensions                 │
+│  • EngineeringConstraints   - Derived requirements                  │
+│  • checkProjectCompliance() - Gap analysis                          │
+└─────────────────────────────────────────────────────────────────────┘
+                                │
+                                │ UNIFIED ACCESS
+                                ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│                    index.ts (barrel file)                           │
+│                    Re-exports all public APIs                       │
 └─────────────────────────────────────────────────────────────────────┘
 ```
 

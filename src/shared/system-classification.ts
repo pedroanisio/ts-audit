@@ -1,38 +1,41 @@
 /**
- * System Classification Module
+ * Shared Module - Unified Entry Point
  *
- * Unified Entry Point for Safety Standards Theory & Universal Risk Framework
+ * Barrel file for Safety Standards & Risk Assessment Framework
  *
  * ═══════════════════════════════════════════════════════════════════════════════
  * MODULE STRUCTURE
  * ═══════════════════════════════════════════════════════════════════════════════
  *
- * This module is organized into two branches:
+ * This module is organized into three layers:
  *
- * 1. THEORETICAL BRANCH (safety-standards-theory.ts)
- *    - Formal lattice algebra for safety integrity levels
- *    - Cross-standard mapping and ordinal functors
- *    - IEC 61508, ISO 26262, DO-178C, ECSS, IEC 62304 definitions
- *    - Probability calculus and composition theorems
- *    - Use for: Cross-standard validation, formal analysis
+ * 1. ABSTRACT THEORY (lattice-theory.ts)
+ *    - Domain-agnostic lattice algebra
+ *    - BoundedLattice, OrderedElement, Galois connections
+ *    - Use for: Custom classification systems, formal mathematics
  *
- * 2. PRACTICAL BRANCH (universal-risk-framework.ts)
+ * 2. SAFETY STANDARDS (safety-standards.ts)
+ *    - IEC 61508 (SIL), ISO 26262 (ASIL), DO-178C (DAL)
+ *    - ECSS (Space), IEC 62304 (Medical)
+ *    - Cross-standard mapping and probability calculus
+ *    - Use for: Safety-critical systems, formal analysis
+ *
+ * 3. RISK ASSESSMENT (risk-assessment.ts)
  *    - Comprehensive risk assessment across ALL dimensions
- *    - Security, Availability, Data, Organizational, Economic dimensions
+ *    - Security, Availability, Data, Organizational, Economic
  *    - Supply chain, Operational history, Interconnection risk
- *    - Deployment lifecycle and update authority
- *    - Use for: Actual risk assessment, system classification
+ *    - Use for: Practical risk assessment, system classification
  *
  * ═══════════════════════════════════════════════════════════════════════════════
  * USAGE
  * ═══════════════════════════════════════════════════════════════════════════════
  *
- * Option 1: Import everything from this file (recommended)
- *   import { SafetyIntegrityLevel, UniversalRiskAssessment } from './system-classification';
+ * Option 1: Import from this barrel file (recommended)
+ *   import { SafetyIntegrityLevel, UniversalRiskAssessment } from './shared';
  *
- * Option 2: Import from specific branch
- *   import { SIL_LATTICE } from './safety-standards-theory';
- *   import { SecurityClassification } from './universal-risk-framework';
+ * Option 2: Import from specific module
+ *   import { SIL_LATTICE } from './shared/safety-standards';
+ *   import { SecurityClassification } from './shared/risk-assessment';
  *
  * ═══════════════════════════════════════════════════════════════════════════════
  */
@@ -174,7 +177,7 @@ export {
 	// SIL Verification
 	type SILVerificationResult,
 	verifySILCompliance,
-} from "./safety-standards-theory";
+} from "./safety-standards";
 
 // =============================================================================
 // RE-EXPORT: PRACTICAL BRANCH (Universal Risk Framework)
@@ -339,14 +342,14 @@ export {
 
 	// Constraint Comparison
 	compareIntegrityLevels,
-} from "./universal-risk-framework";
+} from "./risk-assessment";
 
 // =============================================================================
 // CONVENIENCE RE-EXPORTS FOR BACKWARD COMPATIBILITY
 // =============================================================================
 
 // Legacy type alias - deprecated, use UniversalRiskAssessment instead
-import type { UniversalRiskAssessment } from "./universal-risk-framework";
+import type { UniversalRiskAssessment } from "./risk-assessment";
 
 /**
  * @deprecated Use UniversalRiskAssessment instead
@@ -354,7 +357,7 @@ import type { UniversalRiskAssessment } from "./universal-risk-framework";
 export type SystemClassification = UniversalRiskAssessment;
 
 // Legacy factory function - deprecated
-import { createMinimalRiskAssessment, SystemDomain } from "./universal-risk-framework";
+import { createMinimalRiskAssessment, SystemDomain } from "./risk-assessment";
 
 /**
  * @deprecated Use createMinimalRiskAssessment instead
@@ -375,41 +378,30 @@ export function createSystemClassification(
 // =============================================================================
 
 /**
- * Summary of the two-branch architecture:
+ * Three-layer architecture:
  *
  * ┌─────────────────────────────────────────────────────────────────────────────┐
- * │                        system-classification.ts                             │
+ * │                              index.ts                                       │
  * │                         (Unified Entry Point)                               │
  * └─────────────────────────────────────────────────────────────────────────────┘
  *                                    │
- *              ┌─────────────────────┴─────────────────────┐
- *              │                                           │
- *              ▼                                           ▼
- * ┌─────────────────────────────┐         ┌─────────────────────────────┐
- * │  safety-standards-theory.ts │         │ universal-risk-framework.ts │
- * │                             │         │                             │
- * │  THEORETICAL BRANCH         │         │  PRACTICAL BRANCH           │
- * │                             │         │                             │
- * │  • Lattice algebra          │         │  • Security classification  │
- * │  • SIL/ASIL/DAL/ECSS/62304  │         │  • Availability (SLA/RTO)   │
- * │  • Cross-standard mapping   │         │  • Data classification      │
- * │  • Probability calculus     │         │  • Organizational readiness │
- * │  • Composition theorems     │         │  • Economic impact          │
- * │  • Architecture analysis    │         │  • Supply chain risk        │
- * │  • Fault tree analysis      │         │  • Operational history      │
- * │                             │         │  • Interconnection risk     │
- * │  Use for:                   │         │  • Degraded mode capability │
- * │  Cross-standard validation  │         │  • Deployment lifecycle     │
- * │  Formal safety analysis     │         │  • Engineering constraints  │
- * │                             │         │  • Compliance gap analysis  │
- * │                             │         │                             │
- * │                             │         │  Use for:                   │
- * │                             │         │  Practical risk assessment  │
- * │                             │         │  System classification      │
- * └─────────────────────────────┘         └─────────────────────────────┘
+ *        ┌───────────────────────────┼───────────────────────────┐
+ *        │                           │                           │
+ *        ▼                           ▼                           ▼
+ * ┌──────────────────┐    ┌──────────────────┐    ┌──────────────────────────┐
+ * │ lattice-theory   │    │ safety-standards │    │    risk-assessment       │
+ * │                  │    │                  │    │                          │
+ * │ ABSTRACT MATH    │    │ SAFETY STANDARDS │    │ PRACTICAL ASSESSMENT     │
+ * │                  │    │                  │    │                          │
+ * │ • BoundedLattice │───▶│ • SIL (IEC61508) │───▶│ • Security classification│
+ * │ • OrderedElement │    │ • ASIL (ISO26262)│    │ • Availability (SLA/RTO) │
+ * │ • Galois connect │    │ • DAL (DO-178C)  │    │ • Data classification    │
+ * │ • Homomorphisms  │    │ • ECSS (Space)   │    │ • Org readiness          │
+ * │ • Registry       │    │ • IEC62304 (Med) │    │ • Economic impact        │
+ * │ • Composition    │    │ • Probability    │    │ • Supply chain risk      │
+ * │                  │    │ • Cross-mapping  │    │ • Engineering constraints│
+ * │ Domain-agnostic  │    │                  │    │ • Compliance gap analysis│
+ * └──────────────────┘    └──────────────────┘    └──────────────────────────┘
  *
- * The theoretical branch provides the formal mathematical foundations for
- * comparing safety standards. The practical branch uses those foundations
- * while adding all the dimensions needed for comprehensive risk assessment,
- * engineering constraints derivation, and compliance gap analysis.
+ * DEPENDENCY FLOW: lattice-theory → safety-standards → risk-assessment → index
  */
