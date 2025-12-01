@@ -1,0 +1,50 @@
+services:
+  neo4j:
+    image: neo4j:5.15.0-community
+    container_name: ts-audit-neo4j
+    ports:
+      - "7474:7474"  # HTTP (Browser)
+      - "7687:7687"  # Bolt
+    environment:
+      # Authentication
+      NEO4J_AUTH: neo4j/knowledge_graph_2024
+      
+      # Memory settings (adjust based on your system)
+      NEO4J_server_memory_heap_initial__size: 512m
+      NEO4J_server_memory_heap_max__size: 2G
+      NEO4J_server_memory_pagecache_size: 512m
+      
+      # Enable APOC plugin
+      NEO4J_PLUGINS: '["apoc"]'
+      
+      # Allow file imports
+      NEO4J_dbms_security_procedures_unrestricted: apoc.*
+      NEO4J_dbms_security_allow__csv__import__from__file__urls: "true"
+      
+      # Import folder
+      NEO4J_server_directories_import: /import
+      
+    volumes:
+      # Persist data
+      - neo4j_data:/data
+      - neo4j_logs:/logs
+      
+      # Mount the Cypher file for import
+      - ./complete_graph_v2.cypher:/import/complete_graph_v2.cypher:ro
+      
+      # Mount initialization script
+      - ./neo4j-init:/docker-entrypoint-initdb.d:ro
+      
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:7474"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    
+    restart: unless-stopped
+
+volumes:
+  neo4j_data:
+  neo4j_logs:
+
