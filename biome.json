@@ -9,6 +9,18 @@
 		"ignoreUnknown": false,
 		"ignore": ["dist", "node_modules", "coverage", ".git"]
 	},
+	"overrides": [
+		{
+			"include": ["examples/**", "scripts/**"],
+			"linter": {
+				"rules": {
+					"suspicious": {
+						"noConsoleLog": "off"
+					}
+				}
+			}
+		}
+	],
 	"formatter": {
 		"enabled": true,
 		"formatWithErrors": false,

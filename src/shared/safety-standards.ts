@@ -727,37 +727,32 @@ export const MEDICAL_SOFTWARE_CLASS_DEFINITIONS: Record<
 // =============================================================================
 
 import {
-	// Core abstractions
-	Ordering,
-	type OrderedElement,
 	type BoundedLattice,
-	createBoundedLattice,
-
 	// Composition (abstract version - SafetyLattice has its own implementation)
 	type CompositionStrategy,
-	type DecompositionResult,
-	decomposeRequirement,
-
-	// Cross-lattice mapping
-	type UniversalOrdinal,
-	toUniversalOrdinal,
-	compareAcrossLattices,
-	findNearestEquivalent,
 	type CrossLatticeMapping,
-
+	type DecompositionResult,
+	type GaloisConnection,
 	// Homomorphisms & Galois connections
 	type LatticeHomomorphism,
-	createNearestHomomorphism,
-	type GaloisConnection,
-	createGaloisConnection,
-	checkGaloisProperty,
-
 	// Registry
 	LatticeRegistry,
-	globalRegistry,
-
+	type OrderedElement,
+	// Core abstractions
+	Ordering,
+	// Cross-lattice mapping
+	type UniversalOrdinal,
+	checkGaloisProperty,
+	compareAcrossLattices,
+	createBoundedLattice,
+	createGaloisConnection,
+	createNearestHomomorphism,
+	decomposeRequirement,
 	// Utilities
 	describeLattice,
+	findNearestEquivalent,
+	globalRegistry,
+	toUniversalOrdinal,
 	validateLattice,
 } from "./lattice-theory";
 
@@ -1471,7 +1466,12 @@ interface ASILLevel extends IntegrityLevel {
 	readonly asil: AutomotiveSafetyIntegrityLevel;
 }
 
-const ASIL_QM: ASILLevel = { id: "QM", name: "QM", ordinal: 0, asil: AutomotiveSafetyIntegrityLevel.QM };
+const ASIL_QM: ASILLevel = {
+	id: "QM",
+	name: "QM",
+	ordinal: 0,
+	asil: AutomotiveSafetyIntegrityLevel.QM,
+};
 const ASIL_A: ASILLevel = {
 	id: "ASIL_A",
 	name: "ASIL_A",
@@ -1764,9 +1764,7 @@ export const SAFETY_DOMAIN_BASELINES: Record<SafetyDomain, number> = {
 /**
  * Get the appropriate lattice for a given standard
  */
-export function getLatticeForStandard(
-	standard: StandardIdentifier,
-): SafetyLattice<IntegrityLevel> {
+export function getLatticeForStandard(standard: StandardIdentifier): SafetyLattice<IntegrityLevel> {
 	switch (standard) {
 		case StandardIdentifier.IEC_61508:
 			return SIL_LATTICE as SafetyLattice<IntegrityLevel>;
@@ -2026,7 +2024,10 @@ export function computeRequiredIntegrity(
 	};
 }
 
-export function projectToStandard(universal: UniversalIntegrityLevel, standard: string): string | null {
+export function projectToStandard(
+	universal: UniversalIntegrityLevel,
+	standard: string,
+): string | null {
 	let closestBand: ProbabilityBand | null = null;
 	let closestDistance = Number.POSITIVE_INFINITY;
 
@@ -2335,4 +2336,3 @@ export function verifySILCompliance(
 		details,
 	};
 }
-

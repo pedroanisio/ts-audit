@@ -2,52 +2,43 @@
  * Tests for Forms - Atomic Requirements
  */
 
-import { describe, it, expect } from "vitest";
 import {
+	ASSURANCE_CASE,
+	CODE_REVIEW,
+	FAULT_INJECTION,
+	FORMS,
 	// Form definitions
 	FormCategory,
-	Form,
-	FORMS,
-	UNIT_TESTING,
-	FAULT_INJECTION,
-	STMT_COV_80,
 	MCDC_COV_100,
 	REDUNDANCY_VOTING,
-	CODE_REVIEW,
-	ASSURANCE_CASE,
-
-	// Extraction functions
-	extractTestingForms,
-	extractArchitectureForms,
-	extractProcessForms,
-	extractScopingForms,
-	extractDocumentationForms,
-	extractAllForms,
-
+	STMT_COV_80,
+	UNIT_TESTING,
 	// Context and lattice
 	buildIntegrityFormsContext,
-	getIntegrityFormsContext,
-	getIntegrityFormsLattice,
-
 	// Delta operations
 	computeFormsDelta,
 	computeFormsSymmetricDelta,
 	computeSharedForms,
-	getFormsForLevel,
-	getDeltaFormsWithMetadata,
-
+	extractAllForms,
+	extractArchitectureForms,
+	extractProcessForms,
+	// Extraction functions
+	extractTestingForms,
+	generateDeltaReport,
 	// Reporting
 	generateFormReport,
-	generateDeltaReport,
+	getDeltaFormsWithMetadata,
+	getFormsForLevel,
+	getIntegrityFormsContext,
+	getIntegrityFormsLattice,
 } from "@shared/forms";
+import { describe, expect, it } from "vitest";
 
 import {
 	IntegrityLevel,
-	deriveTestingConstraints,
 	deriveArchitectureConstraints,
 	deriveProcessConstraints,
-	deriveScopingConstraints,
-	deriveDocumentationConstraints,
+	deriveTestingConstraints,
 } from "@shared/risk-assessment";
 
 // =============================================================================
@@ -173,9 +164,9 @@ describe("Form Extraction", () => {
 
 		it("should include forms from all categories for high levels", () => {
 			const forms = extractAllForms(IntegrityLevel.LEVEL_4);
-			const formObjects = [...forms].map(id => FORMS[id]).filter(Boolean);
+			const formObjects = [...forms].map((id) => FORMS[id]).filter(Boolean);
 
-			const categories = new Set(formObjects.map(f => f?.category));
+			const categories = new Set(formObjects.map((f) => f?.category));
 
 			expect(categories.has(FormCategory.TESTING)).toBe(true);
 			expect(categories.has(FormCategory.ARCHITECTURE)).toBe(true);
@@ -270,7 +261,7 @@ describe("Delta Operations", () => {
 		it("should show both added and removed", () => {
 			const { added, removed } = computeFormsSymmetricDelta(
 				IntegrityLevel.LEVEL_3,
-				IntegrityLevel.LEVEL_2
+				IntegrityLevel.LEVEL_2,
 			);
 
 			expect(added.size).toBeGreaterThan(0);
@@ -431,4 +422,3 @@ describe("FCA Integration", () => {
 		expect(lattice.top.intent.size).toBe(0);
 	});
 });
-

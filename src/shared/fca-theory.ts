@@ -86,7 +86,7 @@
  * ═══════════════════════════════════════════════════════════════════════════════
  */
 
-import { Ordering, OrderedElement, BoundedLattice, createBoundedLattice } from "./lattice-theory";
+import { Ordering } from "./lattice-theory";
 
 // =============================================================================
 // SECTION 1: FORMAL CONTEXT
@@ -147,7 +147,7 @@ export interface FormalContextBuilder<G = string, M = string> {
  */
 export function createFormalContextBuilder<G = string, M = string>(
 	id: string,
-	name: string
+	name: string,
 ): FormalContextBuilder<G, M> {
 	const objects = new Set<G>();
 	const attributes = new Set<M>();
@@ -171,9 +171,9 @@ export function createFormalContextBuilder<G = string, M = string>(
 			this.addObject(object);
 			this.addAttribute(attribute);
 			if (value) {
-				incidence.get(object)!.add(attribute);
+				incidence.get(object)?.add(attribute);
 			} else {
-				incidence.get(object)!.delete(attribute);
+				incidence.get(object)?.delete(attribute);
 			}
 			return this;
 		},
@@ -236,7 +236,7 @@ export function createFormalContextFromMatrix<G = string, M = string>(
 	name: string,
 	objects: readonly G[],
 	attributes: readonly M[],
-	matrix: readonly (readonly boolean[])[]
+	matrix: readonly (readonly boolean[])[],
 ): FormalContext<G, M> {
 	const builder = createFormalContextBuilder<G, M>(id, name);
 
@@ -366,7 +366,7 @@ export interface FormalConcept<G = string, M = string> {
  */
 export function conceptFromExtent<G, M>(
 	context: FormalContext<G, M>,
-	extent: Set<G>
+	extent: Set<G>,
 ): FormalConcept<G, M> {
 	const intent = deriveAttributes(context, extent);
 	// Verify closure: the closed extent should equal the original if it's valid
@@ -384,7 +384,7 @@ export function conceptFromExtent<G, M>(
  */
 export function conceptFromIntent<G, M>(
 	context: FormalContext<G, M>,
-	intent: Set<M>
+	intent: Set<M>,
 ): FormalConcept<G, M> {
 	const extent = deriveObjects(context, intent);
 	// Verify closure: the closed intent should equal the original if it's valid
@@ -402,7 +402,7 @@ export function conceptFromIntent<G, M>(
 export function isValidConcept<G, M>(
 	context: FormalContext<G, M>,
 	extent: Set<G>,
-	intent: Set<M>
+	intent: Set<M>,
 ): boolean {
 	const derivedIntent = deriveAttributes(context, extent);
 	const derivedExtent = deriveObjects(context, intent);
@@ -427,10 +427,7 @@ export function isValidConcept<G, M>(
  *
  * (A₁, B₁) ≤ (A₂, B₂) ⟺ A₁ ⊆ A₂ ⟺ B₁ ⊇ B₂
  */
-export function compareConcepts<G, M>(
-	c1: FormalConcept<G, M>,
-	c2: FormalConcept<G, M>
-): Ordering {
+export function compareConcepts<G, M>(c1: FormalConcept<G, M>, c2: FormalConcept<G, M>): Ordering {
 	// Check if c1.extent ⊆ c2.extent
 	let c1SubsetC2 = true;
 	for (const g of c1.extent) {
@@ -451,13 +448,14 @@ export function compareConcepts<G, M>(
 
 	if (c1SubsetC2 && c2SubsetC1) {
 		return Ordering.EQUAL;
-	} else if (c1SubsetC2) {
-		return Ordering.LESS;
-	} else if (c2SubsetC1) {
-		return Ordering.GREATER;
-	} else {
-		return Ordering.INCOMPARABLE;
 	}
+	if (c1SubsetC2) {
+		return Ordering.LESS;
+	}
+	if (c2SubsetC1) {
+		return Ordering.GREATER;
+	}
+	return Ordering.INCOMPARABLE;
 }
 
 // =============================================================================
@@ -695,7 +693,7 @@ export interface AttributeImplication<M = string> {
 export function holdsImplication<G, M>(
 	context: FormalContext<G, M>,
 	premise: Set<M>,
-	conclusion: Set<M>
+	conclusion: Set<M>,
 ): boolean {
 	const premiseExtent = deriveObjects(context, premise);
 	const conclusionExtent = deriveObjects(context, conclusion);
@@ -718,7 +716,7 @@ export function holdsImplication<G, M>(
  */
 export function computeImplications<G, M>(
 	context: FormalContext<G, M>,
-	minSupport = 0
+	minSupport = 0,
 ): AttributeImplication<M>[] {
 	const implications: AttributeImplication<M>[] = [];
 	const lattice = computeConceptLattice(context);
@@ -779,7 +777,7 @@ export function computeStemBase<G, M>(context: FormalContext<G, M>): AttributeIm
 export function computeAttributeDelta<G, M>(
 	context: FormalContext<G, M>,
 	target: G,
-	baseline: G
+	baseline: G,
 ): Set<M> {
 	const targetAttrs = context.attributesOf(target);
 	const baselineAttrs = context.attributesOf(baseline);
@@ -803,7 +801,7 @@ export function computeAttributeDelta<G, M>(
 export function computeAttributeSymmetricDelta<G, M>(
 	context: FormalContext<G, M>,
 	target: G,
-	baseline: G
+	baseline: G,
 ): { added: Set<M>; removed: Set<M> } {
 	const targetAttrs = context.attributesOf(target);
 	const baselineAttrs = context.attributesOf(baseline);
@@ -833,7 +831,7 @@ export function computeAttributeSymmetricDelta<G, M>(
  */
 export function computeSharedAttributes<G, M>(
 	context: FormalContext<G, M>,
-	objects: Set<G>
+	objects: Set<G>,
 ): Set<M> {
 	return deriveAttributes(context, objects);
 }
@@ -845,7 +843,7 @@ export function computeSharedAttributes<G, M>(
  */
 export function findObjectsWithAttributes<G, M>(
 	context: FormalContext<G, M>,
-	attributes: Set<M>
+	attributes: Set<M>,
 ): Set<G> {
 	return deriveObjects(context, attributes);
 }
@@ -860,15 +858,20 @@ export function findObjectsWithAttributes<G, M>(
 export function subcontext<G, M>(
 	context: FormalContext<G, M>,
 	objects?: Set<G>,
-	attributes?: Set<M>
+	attributes?: Set<M>,
 ): FormalContext<G, M> {
-	const filteredObjects = objects ? [...objects].filter((g) => context.objects.includes(g)) : [...context.objects];
+	const filteredObjects = objects
+		? [...objects].filter((g) => context.objects.includes(g))
+		: [...context.objects];
 
 	const filteredAttributes = attributes
 		? [...attributes].filter((m) => context.attributes.includes(m))
 		: [...context.attributes];
 
-	const builder = createFormalContextBuilder<G, M>(`${context.id}_sub`, `${context.name} (subcontext)`);
+	const builder = createFormalContextBuilder<G, M>(
+		`${context.id}_sub`,
+		`${context.name} (subcontext)`,
+	);
 
 	for (const g of filteredObjects) {
 		builder.addObject(g);
@@ -893,7 +896,7 @@ export function subcontext<G, M>(
  */
 export function apposition<G, M1, M2>(
 	context1: FormalContext<G, M1>,
-	context2: FormalContext<G, M2>
+	context2: FormalContext<G, M2>,
 ): FormalContext<G, M1 | M2> {
 	// Verify same objects
 	const objects1 = new Set(context1.objects);
@@ -904,7 +907,7 @@ export function apposition<G, M1, M2>(
 
 	const builder = createFormalContextBuilder<G, M1 | M2>(
 		`${context1.id}|${context2.id}`,
-		`${context1.name} | ${context2.name}`
+		`${context1.name} | ${context2.name}`,
 	);
 
 	for (const g of context1.objects) {
@@ -933,11 +936,11 @@ export function apposition<G, M1, M2>(
  */
 export function subposition<G1, G2, M>(
 	context1: FormalContext<G1, M>,
-	context2: FormalContext<G2, M>
+	context2: FormalContext<G2, M>,
 ): FormalContext<G1 | G2, M> {
 	const builder = createFormalContextBuilder<G1 | G2, M>(
 		`${context1.id}/${context2.id}`,
-		`${context1.name} / ${context2.name}`
+		`${context1.name} / ${context2.name}`,
 	);
 
 	// Add all attributes
@@ -980,7 +983,7 @@ export function subposition<G1, G2, M>(
  */
 export function contextToCrossTable<G, M>(
 	context: FormalContext<G, M>,
-	options?: { objectFormatter?: (g: G) => string; attributeFormatter?: (m: M) => string }
+	options?: { objectFormatter?: (g: G) => string; attributeFormatter?: (m: M) => string },
 ): string {
 	const formatObject = options?.objectFormatter ?? String;
 	const formatAttribute = options?.attributeFormatter ?? String;
@@ -995,16 +998,16 @@ export function contextToCrossTable<G, M>(
 	const lines: string[] = [];
 
 	// Header row
-	const header = " ".repeat(objWidth) + " │ " + attrStrs.map((a) => a.padEnd(attrWidth)).join(" ");
+	const header = `${" ".repeat(objWidth)} │ ${attrStrs.map((a) => a.padEnd(attrWidth)).join(" ")}`;
 	lines.push(header);
 
 	// Separator
-	lines.push("─".repeat(objWidth) + "─┼─" + "─".repeat((attrWidth + 1) * attrStrs.length - 1));
+	lines.push(`${"─".repeat(objWidth)}─┼─${"─".repeat((attrWidth + 1) * attrStrs.length - 1)}`);
 
 	// Data rows
 	for (let i = 0; i < context.objects.length; i++) {
 		const obj = context.objects[i]!;
-		const objStr = objectStrs[i]!.padEnd(objWidth);
+		const objStr = objectStrs[i]?.padEnd(objWidth);
 		const cells: string[] = [];
 
 		for (const attr of context.attributes) {
@@ -1012,7 +1015,7 @@ export function contextToCrossTable<G, M>(
 			cells.push(mark.padStart(Math.floor(attrWidth / 2) + 1).padEnd(attrWidth));
 		}
 
-		lines.push(objStr + " │ " + cells.join(" "));
+		lines.push(`${objStr} │ ${cells.join(" ")}`);
 	}
 
 	return lines.join("\n");
@@ -1023,7 +1026,7 @@ export function contextToCrossTable<G, M>(
  */
 export function describeConcept<G, M>(
 	concept: FormalConcept<G, M>,
-	options?: { objectFormatter?: (g: G) => string; attributeFormatter?: (m: M) => string }
+	options?: { objectFormatter?: (g: G) => string; attributeFormatter?: (m: M) => string },
 ): string {
 	const formatObject = options?.objectFormatter ?? String;
 	const formatAttribute = options?.attributeFormatter ?? String;
@@ -1039,7 +1042,7 @@ export function describeConcept<G, M>(
  */
 export function describeConceptLattice<G, M>(
 	lattice: ConceptLattice<G, M>,
-	options?: { objectFormatter?: (g: G) => string; attributeFormatter?: (m: M) => string }
+	options?: { objectFormatter?: (g: G) => string; attributeFormatter?: (m: M) => string },
 ): string {
 	const lines: string[] = [
 		`Concept Lattice for "${lattice.context.name}"`,
@@ -1066,7 +1069,7 @@ export function describeConceptLattice<G, M>(
  * Validate a formal context for correctness
  */
 export function validateContext<G, M>(
-	context: FormalContext<G, M>
+	context: FormalContext<G, M>,
 ): { valid: boolean; errors: string[] } {
 	const errors: string[] = [];
 
@@ -1099,7 +1102,7 @@ export function validateContext<G, M>(
  * Validate that a concept lattice is well-formed
  */
 export function validateConceptLattice<G, M>(
-	lattice: ConceptLattice<G, M>
+	lattice: ConceptLattice<G, M>,
 ): { valid: boolean; errors: string[] } {
 	const errors: string[] = [];
 
@@ -1129,7 +1132,9 @@ export function validateConceptLattice<G, M>(
 					}
 				}
 				if (!extentSubset) {
-					errors.push(`Ordering inconsistency: ${describeConcept(c1)} < ${describeConcept(c2)} but extent not subset`);
+					errors.push(
+						`Ordering inconsistency: ${describeConcept(c1)} < ${describeConcept(c2)} but extent not subset`,
+					);
 				}
 			}
 		}
@@ -1137,4 +1142,3 @@ export function validateConceptLattice<G, M>(
 
 	return { valid: errors.length === 0, errors };
 }
-

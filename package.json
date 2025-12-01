@@ -26,10 +26,13 @@
 		"tokens:generate": "tsx scripts/generate-tokens.ts",
 		"tokens:verify": "tsx scripts/verify-tokens.ts",
 		"report:safety": "tsx scripts/generate-report.ts",
+		"report:research": "tsx scripts/research-report.ts",
+		"graph:load": "tsx scripts/load-graph.ts",
 		"prepare": "simple-git-hooks"
 	},
 	"dependencies": {
 		"lucide-react": "^0.460.0",
+		"neo4j-driver": "^5.27.0",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",
 		"tslog": "^4.9.3"

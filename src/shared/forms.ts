@@ -46,28 +46,27 @@
  */
 
 import {
+	type ConceptLattice,
 	type FormalContext,
-	createFormalContextBuilder,
-	computeConceptLattice,
-	deriveAttributes,
 	computeAttributeDelta,
 	computeAttributeSymmetricDelta,
-	type ConceptLattice,
-	type FormalConcept,
+	computeConceptLattice,
+	createFormalContextBuilder,
+	deriveAttributes,
 } from "./fca-theory";
 
 import {
-	IntegrityLevel,
-	type TestingConstraints,
 	type ArchitectureConstraints,
+	type DocumentationConstraints,
+	IntegrityLevel,
 	type ProcessConstraints,
 	type ScopingConstraints,
-	type DocumentationConstraints,
-	deriveTestingConstraints,
+	type TestingConstraints,
 	deriveArchitectureConstraints,
+	deriveDocumentationConstraints,
 	deriveProcessConstraints,
 	deriveScopingConstraints,
-	deriveDocumentationConstraints,
+	deriveTestingConstraints,
 } from "./risk-assessment";
 
 // =============================================================================
@@ -764,7 +763,10 @@ export function extractTestingForms(constraints: TestingConstraints): Set<string
 	if (constraints.mcdcCoverage >= 100) forms.add(MCDC_COV_100.id);
 
 	// Regression testing scope
-	if (constraints.regressionTestingScope === "affected" || constraints.regressionTestingScope === "full") {
+	if (
+		constraints.regressionTestingScope === "affected" ||
+		constraints.regressionTestingScope === "full"
+	) {
 		forms.add(REGRESSION_AFFECTED.id);
 	}
 	if (constraints.regressionTestingScope === "full") {
@@ -772,7 +774,10 @@ export function extractTestingForms(constraints: TestingConstraints): Set<string
 	}
 
 	// Test documentation
-	if (constraints.testDocumentationLevel === "structured" || constraints.testDocumentationLevel === "formal") {
+	if (
+		constraints.testDocumentationLevel === "structured" ||
+		constraints.testDocumentationLevel === "formal"
+	) {
 		forms.add(TEST_DOC_STRUCTURED.id);
 	}
 	if (constraints.testDocumentationLevel === "formal") {
@@ -814,7 +819,10 @@ export function extractArchitectureForms(constraints: ArchitectureConstraints): 
 	}
 
 	// Monitoring
-	if (constraints.monitoringLevel === "comprehensive" || constraints.monitoringLevel === "real_time") {
+	if (
+		constraints.monitoringLevel === "comprehensive" ||
+		constraints.monitoringLevel === "real_time"
+	) {
 		forms.add(MONITORING_COMPREHENSIVE.id);
 	}
 	if (constraints.monitoringLevel === "real_time") {
@@ -822,7 +830,10 @@ export function extractArchitectureForms(constraints: ArchitectureConstraints): 
 	}
 
 	// Error handling
-	if (constraints.errorHandlingLevel === "comprehensive" || constraints.errorHandlingLevel === "fail_safe") {
+	if (
+		constraints.errorHandlingLevel === "comprehensive" ||
+		constraints.errorHandlingLevel === "fail_safe"
+	) {
 		forms.add(ERROR_HANDLING_COMPREHENSIVE.id);
 	}
 	if (constraints.errorHandlingLevel === "fail_safe") {
@@ -830,7 +841,10 @@ export function extractArchitectureForms(constraints: ArchitectureConstraints): 
 	}
 
 	// Data integrity
-	if (constraints.dataIntegrityLevel === "strong" || constraints.dataIntegrityLevel === "verified") {
+	if (
+		constraints.dataIntegrityLevel === "strong" ||
+		constraints.dataIntegrityLevel === "verified"
+	) {
 		forms.add(DATA_INTEGRITY_STRONG.id);
 	}
 	if (constraints.dataIntegrityLevel === "verified") {
@@ -1052,7 +1066,7 @@ export function extractAllForms(level: IntegrityLevel): Set<string> {
 export function buildIntegrityFormsContext(): FormalContext<string, string> {
 	const builder = createFormalContextBuilder<string, string>(
 		"integrity_forms",
-		"Integrity Levels → Forms"
+		"Integrity Levels → Forms",
 	);
 
 	// Add all integrity levels
@@ -1105,10 +1119,7 @@ export function getIntegrityFormsLattice(): ConceptLattice<string, string> {
 /**
  * Compute what Forms are required by target but not by baseline
  */
-export function computeFormsDelta(
-	target: IntegrityLevel,
-	baseline: IntegrityLevel
-): Set<string> {
+export function computeFormsDelta(target: IntegrityLevel, baseline: IntegrityLevel): Set<string> {
 	const context = getIntegrityFormsContext();
 	return computeAttributeDelta(context, `L${target}`, `L${baseline}`);
 }
@@ -1118,7 +1129,7 @@ export function computeFormsDelta(
  */
 export function computeFormsSymmetricDelta(
 	target: IntegrityLevel,
-	baseline: IntegrityLevel
+	baseline: IntegrityLevel,
 ): { added: Set<string>; removed: Set<string> } {
 	const context = getIntegrityFormsContext();
 	return computeAttributeSymmetricDelta(context, `L${target}`, `L${baseline}`);
@@ -1129,7 +1140,7 @@ export function computeFormsSymmetricDelta(
  */
 export function computeSharedForms(levels: IntegrityLevel[]): Set<string> {
 	const context = getIntegrityFormsContext();
-	const levelNames = new Set(levels.map(l => `L${l}`));
+	const levelNames = new Set(levels.map((l) => `L${l}`));
 	return deriveAttributes(context, levelNames);
 }
 
@@ -1138,7 +1149,7 @@ export function computeSharedForms(levels: IntegrityLevel[]): Set<string> {
  */
 export function getFormsForLevel(level: IntegrityLevel): Form[] {
 	const formIds = extractAllForms(level);
-	return [...formIds].map(id => FORMS[id]).filter((f): f is Form => f !== undefined);
+	return [...formIds].map((id) => FORMS[id]).filter((f): f is Form => f !== undefined);
 }
 
 /**
@@ -1146,13 +1157,13 @@ export function getFormsForLevel(level: IntegrityLevel): Form[] {
  */
 export function getDeltaFormsWithMetadata(
 	target: IntegrityLevel,
-	baseline: IntegrityLevel
+	baseline: IntegrityLevel,
 ): { form: Form; category: FormCategory }[] {
 	const delta = computeFormsDelta(target, baseline);
 	return [...delta]
-		.map(id => FORMS[id])
+		.map((id) => FORMS[id])
 		.filter((f): f is Form => f !== undefined)
-		.map(f => ({ form: f, category: f.category }));
+		.map((f) => ({ form: f, category: f.category }));
 }
 
 // =============================================================================
@@ -1187,7 +1198,9 @@ export function generateFormReport(level: IntegrityLevel): string {
 			for (const form of categoryForms) {
 				lines.push(`  • ${form.name}`);
 				if (form.threshold) {
-					lines.push(`    ${form.threshold.metric} ${form.threshold.operator} ${form.threshold.value}${form.threshold.unit ?? ""}`);
+					lines.push(
+						`    ${form.threshold.metric} ${form.threshold.operator} ${form.threshold.value}${form.threshold.unit ?? ""}`,
+					);
 				}
 			}
 			lines.push("");
@@ -1200,10 +1213,7 @@ export function generateFormReport(level: IntegrityLevel): string {
 /**
  * Generate a delta report between two levels
  */
-export function generateDeltaReport(
-	target: IntegrityLevel,
-	baseline: IntegrityLevel
-): string {
+export function generateDeltaReport(target: IntegrityLevel, baseline: IntegrityLevel): string {
 	const { added, removed } = computeFormsSymmetricDelta(target, baseline);
 
 	const lines: string[] = [
@@ -1258,8 +1268,7 @@ export function generateFormMatrix(): string {
 			const form = FORMS[m];
 			// Truncate to 20 chars for display
 			const name = form?.name ?? m;
-			return name.length > 20 ? name.substring(0, 17) + "..." : name;
+			return name.length > 20 ? `${name.substring(0, 17)}...` : name;
 		},
 	});
 }
-

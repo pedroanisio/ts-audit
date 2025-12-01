@@ -72,41 +72,34 @@ export {
 	type FormalContextBuilder,
 	createFormalContextBuilder,
 	createFormalContextFromMatrix,
-
 	// Derivation Operators
 	deriveAttributes,
 	deriveObjects,
 	closureObjects,
 	closureAttributes,
-
 	// Formal Concepts
 	type FormalConcept,
 	conceptFromExtent,
 	conceptFromIntent,
 	isValidConcept,
 	compareConcepts,
-
 	// Concept Lattice
 	type ConceptLattice,
 	computeConceptLattice,
-
 	// Attribute Implications
 	type AttributeImplication,
 	holdsImplication,
 	computeImplications,
 	computeStemBase,
-
 	// Delta Computation
 	computeAttributeDelta,
 	computeAttributeSymmetricDelta,
 	computeSharedAttributes,
 	findObjectsWithAttributes,
-
 	// Context Operations
 	subcontext,
 	apposition,
 	subposition,
-
 	// Visualization & Validation
 	contextToCrossTable,
 	describeConcept,
@@ -124,7 +117,6 @@ export {
 	FormCategory,
 	type Form,
 	FORMS,
-
 	// Extraction functions
 	extractTestingForms,
 	extractArchitectureForms,
@@ -132,24 +124,20 @@ export {
 	extractScopingForms,
 	extractDocumentationForms,
 	extractAllForms,
-
 	// Formal Context for Forms
 	buildIntegrityFormsContext,
 	getIntegrityFormsContext,
 	getIntegrityFormsLattice,
-
 	// Delta operations
 	computeFormsDelta,
 	computeFormsSymmetricDelta,
 	computeSharedForms,
 	getFormsForLevel,
 	getDeltaFormsWithMetadata,
-
 	// Reporting
 	generateFormReport,
 	generateDeltaReport,
 	generateFormMatrix,
-
 	// Individual Forms (for direct import)
 	UNIT_TESTING,
 	INTEGRATION_TESTING,
@@ -181,32 +169,26 @@ export {
 	TechnologyReadinessLevel,
 	TRL_DEFINITIONS,
 	type TRLDefinition,
-
 	// IEC 61508 - Safety Integrity Levels
 	SafetyIntegrityLevel,
 	SIL_DEFINITIONS,
 	type SILDefinition,
-
 	// ISO 26262 - Automotive Safety
 	AutomotiveSafetyIntegrityLevel,
 	ASIL_DEFINITIONS,
 	type ASILDefinition,
-
 	// DO-178C - Aviation
 	DesignAssuranceLevel,
 	DAL_DEFINITIONS,
 	type DALDefinition,
-
 	// ECSS - Space
 	SpaceSoftwareCriticality,
 	SPACE_CRITICALITY_DEFINITIONS,
 	type SpaceCriticalityDefinition,
-
 	// IEC 62304 - Medical
 	MedicalDeviceSoftwareClass,
 	MEDICAL_SOFTWARE_CLASS_DEFINITIONS,
 	type MedicalSoftwareClassDefinition,
-
 	// Lattice Algebra (abstract theory from integrity-classification-theory)
 	Ordering,
 	type OrderedElement,
@@ -229,7 +211,6 @@ export {
 	globalRegistry,
 	describeLattice,
 	validateLattice,
-
 	// Lattice Algebra (safety-specific)
 	AssessmentMethodology,
 	// Note: IntegrityLevel interface from safety-standards is internal (use OrderedElement for generics)
@@ -249,7 +230,6 @@ export {
 	type SafetyLattice,
 	type LatticeVerificationResult,
 	verifyLatticeAxioms,
-
 	// Cross-Standard Mapping
 	MappingConfidence,
 	type ProbabilityBand,
@@ -260,7 +240,6 @@ export {
 	getUniversalOrdinal,
 	getProbabilityBand,
 	getMappingConfidence,
-
 	// Concrete Lattices
 	SIL_LATTICE,
 	createSILLowDemandUniversal,
@@ -268,7 +247,6 @@ export {
 	DAL_LATTICE,
 	ECSS_LATTICE,
 	MEDICAL_LATTICE,
-
 	// Safety Domain Mappings
 	SafetyDomain,
 	SAFETY_DOMAIN_STANDARDS,
@@ -276,7 +254,6 @@ export {
 	getLatticeForStandard,
 	getPrimaryStandard,
 	getRecommendedLevel,
-
 	// Composition Theorems
 	type CompositionContext,
 	DEFAULT_COMPOSITION_CONTEXT,
@@ -286,7 +263,6 @@ export {
 	checkRefinementValid,
 	findMinimumLevel,
 	isValidASILDecomposition,
-
 	// Risk Calculus
 	type RiskAssessment,
 	severityToWeight,
@@ -297,26 +273,22 @@ export {
 	convertPFHtoPFD,
 	calculateRisk,
 	deriveRequiredSIL,
-
 	// Architecture Calculations
 	calculatePFD_1oo1,
 	calculatePFD_1oo2,
 	calculatePFD_2oo3,
 	calculatePFD_1oo2_Markov,
 	calculateArchitectureSIL,
-
 	// Hardware Metrics
 	type HardwareMetrics,
 	calculateDiagnosticCoverage,
 	calculateSFF,
 	getArchitecturalConstraintSIL,
-
 	// Fault Tree Analysis
 	type FaultTreeGate,
 	faultTreeAND,
 	faultTreeOR,
 	faultTreeVOTE,
-
 	// SIL Verification
 	type SILVerificationResult,
 	verifySILCompliance,
@@ -337,7 +309,6 @@ export {
 	AuditRequirement,
 	ThreatActor,
 	SECURITY_LEVEL_DEFINITIONS,
-
 	// Availability Requirements
 	AvailabilityTier,
 	type AvailabilityRequirements,
@@ -346,13 +317,11 @@ export {
 	GeoRedundancy,
 	DisasterRecoveryRequirement,
 	AVAILABILITY_TIER_DEFINITIONS,
-
 	// Data Classification
 	type DataClassification,
 	DataType,
 	type DataResidency,
 	type CrossBorderRestriction,
-
 	// Organizational Readiness
 	type OrganizationalReadiness,
 	TeamMaturityLevel,
@@ -360,7 +329,6 @@ export {
 	TeamStability,
 	ProcessMaturityLevel,
 	type ResourceAllocation,
-
 	// Economic Impact
 	type EconomicImpact,
 	type MonetaryAmount,
@@ -368,7 +336,6 @@ export {
 	BusinessCriticality,
 	CustomerImpactScope,
 	CompetitiveImpact,
-
 	// Supply Chain Risk
 	type SupplyChainRisk,
 	type DependencyRisk,
@@ -378,7 +345,6 @@ export {
 	type GeographicSupplyChainRisk,
 	SBOMStatus,
 	ProvenanceVerification,
-
 	// Operational History
 	type OperationalHistory,
 	type IncidentHistory,
@@ -388,7 +354,6 @@ export {
 	type TechnicalDebtAssessment,
 	type CodeQualityMetrics,
 	type AuditHistory,
-
 	// Interconnection Risk
 	type InterconnectionRisk,
 	type SystemDependency,
@@ -397,23 +362,19 @@ export {
 	type ImpactScope,
 	CascadeFailurePotential,
 	IntegrationComplexity,
-
 	// Degraded Mode Capability
 	type DegradedModeCapability,
 	type DegradedMode,
 	type FailSafeState,
 	RecoveryAutomation,
 	ChaosEngineeringMaturity,
-
 	// System Domain & Scale
 	SystemDomain,
 	SystemScale,
-
 	// Development Maturity
 	DevelopmentMaturity,
 	type MaturityDefinition,
 	MATURITY_DEFINITIONS,
-
 	// Deployment
 	DeploymentEnvironment,
 	DeploymentContext,
@@ -430,30 +391,24 @@ export {
 	type UpdateVelocity,
 	type UpdateAuthority,
 	type DeploymentLifecycle,
-
 	// Safety Criticality Type
 	type SafetyCriticality,
-
 	// Universal Risk Assessment
 	type UniversalRiskAssessment,
-
 	// Risk Scoring
 	type DimensionRiskScore,
 	type RiskProfile,
 	RiskTier,
 	calculateRiskProfile,
-
 	// Factory Functions
 	createMinimalRiskAssessment,
 	createWebAppRiskAssessment,
 	createSafetyCriticalRiskAssessment,
-
 	// Validation
 	type ValidationResult,
 	type ValidationIssue,
 	validateRiskAssessment,
 	trlToMaturity,
-
 	// Engineering Constraints Derivation
 	IntegrityLevel,
 	ExposureLevel,
@@ -471,18 +426,15 @@ export {
 	deriveScopingConstraints,
 	deriveDocumentationConstraints,
 	deriveEngineeringConstraints,
-
 	// Impact-Based Integrity Assessment
 	type ImpactAssessmentInput,
 	computeIntegrityLevel,
 	assessProjectConstraints,
-
 	// Compliance Gap Analysis
 	type ProjectComplianceStatus,
 	type ComplianceGap,
 	type ComplianceResult,
 	checkProjectCompliance,
-
 	// Constraint Comparison
 	compareIntegrityLevels,
 } from "./risk-assessment";
@@ -500,7 +452,7 @@ import type { UniversalRiskAssessment } from "./risk-assessment";
 export type SystemClassification = UniversalRiskAssessment;
 
 // Legacy factory function - deprecated
-import { createMinimalRiskAssessment, SystemDomain } from "./risk-assessment";
+import { type SystemDomain, createMinimalRiskAssessment } from "./risk-assessment";
 
 /**
  * @deprecated Use createMinimalRiskAssessment instead

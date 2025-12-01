@@ -29,7 +29,7 @@ services:
       - neo4j_data:/data
       - neo4j_logs:/logs
       
-      # Mount the Cypher file for import
+      # Mount the Cypher file for import (master data)
       - ./complete_graph_v2.cypher:/import/complete_graph_v2.cypher:ro
       
       # Mount initialization script

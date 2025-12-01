@@ -4,31 +4,30 @@
  * These tests verify the mathematical properties of FCA operations.
  */
 
-import { describe, it, expect } from "vitest";
+import { describe, expect, it } from "vitest";
 import {
+	apposition,
+	closureObjects,
+	compareConcepts,
+	computeAttributeDelta,
+	computeAttributeSymmetricDelta,
+	computeConceptLattice,
+	computeSharedAttributes,
+	conceptFromExtent,
+	conceptFromIntent,
+	contextToCrossTable,
 	createFormalContextBuilder,
 	createFormalContextFromMatrix,
 	deriveAttributes,
 	deriveObjects,
-	closureObjects,
-	closureAttributes,
-	conceptFromExtent,
-	conceptFromIntent,
-	isValidConcept,
-	compareConcepts,
-	computeConceptLattice,
-	holdsImplication,
-	computeAttributeDelta,
-	computeAttributeSymmetricDelta,
-	computeSharedAttributes,
-	contextToCrossTable,
 	describeConcept,
 	describeConceptLattice,
-	validateContext,
-	validateConceptLattice,
+	holdsImplication,
+	isValidConcept,
 	subcontext,
-	apposition,
 	subposition,
+	validateConceptLattice,
+	validateContext,
 } from "./fca-theory";
 import { Ordering } from "./lattice-theory";
 
@@ -58,7 +57,15 @@ function createLivingBeingsContext() {
 		"living_beings",
 		"Living Beings",
 		["leech", "bream", "frog", "dog", "spike_weed", "reed", "bean", "maize"],
-		["needs_water", "lives_in_water", "lives_on_land", "has_limbs", "monocotyledon", "dicotyledon", "can_move"],
+		[
+			"needs_water",
+			"lives_in_water",
+			"lives_on_land",
+			"has_limbs",
+			"monocotyledon",
+			"dicotyledon",
+			"can_move",
+		],
 		[
 			[true, true, true, false, false, false, true], // leech
 			[true, true, false, true, false, false, true], // bream
@@ -68,7 +75,7 @@ function createLivingBeingsContext() {
 			[true, true, true, false, true, false, false], // reed
 			[true, false, true, false, false, true, false], // bean
 			[true, false, true, false, true, false, false], // maize
-		]
+		],
 	);
 }
 
@@ -88,7 +95,12 @@ function createIntegrityContext() {
 	builder.addObjectAttributes("L1", ["unit_test", "code_review"]);
 
 	// L2: Standard requirements (includes L1)
-	builder.addObjectAttributes("L2", ["unit_test", "code_review", "integration_test", "static_analysis"]);
+	builder.addObjectAttributes("L2", [
+		"unit_test",
+		"code_review",
+		"integration_test",
+		"static_analysis",
+	]);
 
 	// L3: High requirements (includes L2)
 	builder.addObjectAttributes("L3", [
@@ -654,4 +666,3 @@ describe("Galois Connection Properties", () => {
 		}
 	});
 });
-

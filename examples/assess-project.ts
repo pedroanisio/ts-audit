@@ -6,13 +6,13 @@
  */
 
 import {
+	Controllability,
+	ExposureFrequency,
+	HarmPotential,
+	OperationalContext,
+	QUICK_ASSESSMENTS,
 	assessImpact,
 	generateAssessmentReport,
-	QUICK_ASSESSMENTS,
-	HarmPotential,
-	ExposureFrequency,
-	Controllability,
-	OperationalContext,
 } from "../src/shared/assessment";
 
 console.log("╔═══════════════════════════════════════════════════════════════════════════════╗");
@@ -28,35 +28,43 @@ console.log("━━━ EXAMPLE 1: Quick Assessment for Common Project Types ━�
 console.log();
 
 const internalTool = QUICK_ASSESSMENTS.internalTool();
-console.log(`📋 Internal Business Tool:`);
+console.log("📋 Internal Business Tool:");
 console.log(`   Recommended: ${internalTool.recommendations.integrityLevel}`);
-console.log(`   Testing: ${internalTool.recommendations.testing.requiredTestTypes.slice(0, 3).join(", ")}`);
+console.log(
+	`   Testing: ${internalTool.recommendations.testing.requiredTestTypes.slice(0, 3).join(", ")}`,
+);
 console.log();
 
 const webApp = QUICK_ASSESSMENTS.publicWebApp();
-console.log(`🌐 Public Web Application:`);
+console.log("🌐 Public Web Application:");
 console.log(`   Recommended: ${webApp.recommendations.integrityLevel}`);
 console.log(`   Testing: ${webApp.recommendations.testing.requiredTestTypes.join(", ")}`);
 console.log();
 
 const iotDevice = QUICK_ASSESSMENTS.iotActuator();
-console.log(`🔌 IoT Actuator Device:`);
+console.log("🔌 IoT Actuator Device:");
 console.log(`   Recommended: ${iotDevice.recommendations.integrityLevel}`);
 console.log(`   Architecture: ${iotDevice.recommendations.architecture.pattern}`);
 console.log();
 
 const medicalDevice = QUICK_ASSESSMENTS.medicalMonitor();
-console.log(`🏥 Medical Monitoring Device:`);
+console.log("🏥 Medical Monitoring Device:");
 console.log(`   Recommended: ${medicalDevice.recommendations.integrityLevel}`);
-console.log(`   Domain: ${medicalDevice.domainSpecificLevel?.standard} → ${medicalDevice.domainSpecificLevel?.level}`);
+console.log(
+	`   Domain: ${medicalDevice.domainSpecificLevel?.standard} → ${medicalDevice.domainSpecificLevel?.level}`,
+);
 console.log(`   Testing Independence: ${medicalDevice.recommendations.testing.independenceLevel}`);
 console.log();
 
 const automotive = QUICK_ASSESSMENTS.automotiveADAS();
-console.log(`🚗 Automotive ADAS System:`);
+console.log("🚗 Automotive ADAS System:");
 console.log(`   Recommended: ${automotive.recommendations.integrityLevel}`);
-console.log(`   Domain: ${automotive.domainSpecificLevel?.standard} → ${automotive.domainSpecificLevel?.level}`);
-console.log(`   Architecture HFT: ${automotive.recommendations.architecture.hardwareFaultTolerance}`);
+console.log(
+	`   Domain: ${automotive.domainSpecificLevel?.standard} → ${automotive.domainSpecificLevel?.level}`,
+);
+console.log(
+	`   Architecture HFT: ${automotive.recommendations.architecture.hardwareFaultTolerance}`,
+);
 console.log();
 
 // =============================================================================
@@ -82,12 +90,16 @@ console.log(`   Risk Reduction Factor: ${homeAutomation.riskReductionFactor.toFi
 console.log();
 console.log("   Architecture Recommendations:");
 console.log(`   • Pattern: ${homeAutomation.recommendations.architecture.pattern}`);
-console.log(`   • Techniques: ${homeAutomation.recommendations.architecture.techniques.join(", ")}`);
+console.log(
+	`   • Techniques: ${homeAutomation.recommendations.architecture.techniques.join(", ")}`,
+);
 console.log();
 console.log("   Testing Requirements:");
 console.log(`   • Types: ${homeAutomation.recommendations.testing.requiredTestTypes.join(", ")}`);
 if (homeAutomation.recommendations.testing.coverageTargets.statement) {
-	console.log(`   • Statement Coverage: ≥${homeAutomation.recommendations.testing.coverageTargets.statement}%`);
+	console.log(
+		`   • Statement Coverage: ≥${homeAutomation.recommendations.testing.coverageTargets.statement}%`,
+	);
 }
 console.log();
 
@@ -116,16 +128,36 @@ console.log(generateAssessmentReport(robotController));
 console.log();
 console.log("━━━ SUMMARY COMPARISON ━━━");
 console.log();
-console.log("┌────────────────────────────┬──────────────┬─────────────────────────────────────────┐");
-console.log("│ Project Type               │ SIL Level    │ Key Constraints                         │");
-console.log("├────────────────────────────┼──────────────┼─────────────────────────────────────────┤");
-console.log(`│ Internal Tool              │ ${internalTool.requiredSIL.padEnd(12)} │ Standard practices                      │`);
-console.log(`│ Public Web App             │ ${webApp.requiredSIL.padEnd(12)} │ Error handling, input validation        │`);
-console.log(`│ IoT Actuator               │ ${iotDevice.requiredSIL.padEnd(12)} │ Defensive programming, self-diagnostics │`);
-console.log(`│ Medical Monitor            │ ${medicalDevice.requiredSIL.padEnd(12)} │ Independent V&V, formal reviews         │`);
-console.log(`│ Automotive ADAS            │ ${automotive.requiredSIL.padEnd(12)} │ Redundant architecture, formal methods  │`);
-console.log(`│ Industrial Robot           │ ${robotController.requiredSIL.padEnd(12)} │ Fail-safe design, coverage testing      │`);
-console.log("└────────────────────────────┴──────────────┴─────────────────────────────────────────┘");
+console.log(
+	"┌────────────────────────────┬──────────────┬─────────────────────────────────────────┐",
+);
+console.log(
+	"│ Project Type               │ SIL Level    │ Key Constraints                         │",
+);
+console.log(
+	"├────────────────────────────┼──────────────┼─────────────────────────────────────────┤",
+);
+console.log(
+	`│ Internal Tool              │ ${internalTool.requiredSIL.padEnd(12)} │ Standard practices                      │`,
+);
+console.log(
+	`│ Public Web App             │ ${webApp.requiredSIL.padEnd(12)} │ Error handling, input validation        │`,
+);
+console.log(
+	`│ IoT Actuator               │ ${iotDevice.requiredSIL.padEnd(12)} │ Defensive programming, self-diagnostics │`,
+);
+console.log(
+	`│ Medical Monitor            │ ${medicalDevice.requiredSIL.padEnd(12)} │ Independent V&V, formal reviews         │`,
+);
+console.log(
+	`│ Automotive ADAS            │ ${automotive.requiredSIL.padEnd(12)} │ Redundant architecture, formal methods  │`,
+);
+console.log(
+	`│ Industrial Robot           │ ${robotController.requiredSIL.padEnd(12)} │ Fail-safe design, coverage testing      │`,
+);
+console.log(
+	"└────────────────────────────┴──────────────┴─────────────────────────────────────────┘",
+);
 console.log();
 
 // =============================================================================
@@ -168,4 +200,3 @@ const result = assessImpact({
 
 console.log(result.recommendations);
 `);
-

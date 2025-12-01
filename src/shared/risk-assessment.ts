@@ -41,12 +41,12 @@
  */
 
 import {
-	// Safety Standards
-	SafetyIntegrityLevel,
 	AutomotiveSafetyIntegrityLevel,
 	DesignAssuranceLevel,
-	SpaceSoftwareCriticality,
 	MedicalDeviceSoftwareClass,
+	// Safety Standards
+	type SafetyIntegrityLevel,
+	SpaceSoftwareCriticality,
 	TechnologyReadinessLevel,
 } from "./safety-standards";
 
@@ -148,12 +148,15 @@ export enum ThreatActor {
 	TERRORIST = "terrorist", // Terrorist organizations
 }
 
-export const SECURITY_LEVEL_DEFINITIONS: Record<SecurityIntegrityLevel, {
-	name: string;
-	description: string;
-	typicalThreats: ThreatActor[];
-	requiredControls: string[];
-}> = {
+export const SECURITY_LEVEL_DEFINITIONS: Record<
+	SecurityIntegrityLevel,
+	{
+		name: string;
+		description: string;
+		typicalThreats: ThreatActor[];
+		requiredControls: string[];
+	}
+> = {
 	[SecurityIntegrityLevel.SL_0]: {
 		name: "No Security Requirements",
 		description: "System has no security-relevant functions",
@@ -182,7 +185,12 @@ export const SECURITY_LEVEL_DEFINITIONS: Record<SecurityIntegrityLevel, {
 		name: "Maximum Security",
 		description: "Protection against state-level actors with extensive resources",
 		typicalThreats: [ThreatActor.NATION_STATE, ThreatActor.TERRORIST],
-		requiredControls: ["Hardware security modules", "Air-gapping", "Formal verification", "Red team testing"],
+		requiredControls: [
+			"Hardware security modules",
+			"Air-gapping",
+			"Formal verification",
+			"Red team testing",
+		],
 	},
 };
 
@@ -261,12 +269,15 @@ export enum DisasterRecoveryRequirement {
 	INSTANT = "instant", // Zero-downtime failover
 }
 
-export const AVAILABILITY_TIER_DEFINITIONS: Record<AvailabilityTier, {
-	name: string;
-	uptimePercent: number;
-	downtimePerYear: string;
-	typicalApplications: string[];
-}> = {
+export const AVAILABILITY_TIER_DEFINITIONS: Record<
+	AvailabilityTier,
+	{
+		name: string;
+		uptimePercent: number;
+		downtimePerYear: string;
+		typicalApplications: string[];
+	}
+> = {
 	[AvailabilityTier.TIER_0]: {
 		name: "Best Effort",
 		uptimePercent: 0,
@@ -2868,7 +2879,8 @@ const LEVEL_DESCRIPTIONS: Record<IntegrityLevel, string> = {
 	[IntegrityLevel.LEVEL_1]: "Low integrity - basic quality assurance required",
 	[IntegrityLevel.LEVEL_2]: "Medium integrity - systematic quality and testing required",
 	[IntegrityLevel.LEVEL_3]: "High integrity - rigorous verification and documentation required",
-	[IntegrityLevel.LEVEL_4]: "Highest integrity - formal methods and exhaustive verification required",
+	[IntegrityLevel.LEVEL_4]:
+		"Highest integrity - formal methods and exhaustive verification required",
 };
 
 /**
@@ -3321,12 +3333,15 @@ export function compareIntegrityLevels(
 	if (higherTesting.faultInjectionRequired && !lowerTesting.faultInjectionRequired) {
 		testingDelta.faultInjectionRequired = true;
 	}
-	if (higherTesting.independentVerificationRequired && !lowerTesting.independentVerificationRequired) {
+	if (
+		higherTesting.independentVerificationRequired &&
+		!lowerTesting.independentVerificationRequired
+	) {
 		testingDelta.independentVerificationRequired = true;
 	}
 
 	// Effort roughly doubles per level
-	const effortMultiplier = Math.pow(2, higher - lower);
+	const effortMultiplier = 2 ** (higher - lower);
 
 	return {
 		testingDelta,
@@ -3335,4 +3350,3 @@ export function compareIntegrityLevels(
 		effortMultiplier,
 	};
 }
-
